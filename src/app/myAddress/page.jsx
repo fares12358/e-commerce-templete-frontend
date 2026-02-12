@@ -17,9 +17,9 @@ import {
 } from "@/lib/api";
 
 import { toast } from "react-toastify";
-import ConfirmModal from "@/components/ConfirmModal";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
+import ConfirmModal from "@/Components/ConfirmModal";
 
 export default function AddressesPage() {
   const { user, addresses, setAddresses } = useAuth()

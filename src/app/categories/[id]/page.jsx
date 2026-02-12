@@ -2,12 +2,12 @@
 
 import { useEffect, useState } from "react"
 import { useParams } from "next/navigation"
-import CartSidePanel from "@/components/CartSidePanel"
 import { getProductsByCat } from "@/lib/api"
 import { useAuth } from "@/context/AuthContext"
 import CustomSelect from "@/Components/CustomSelect"
 import Loader from "@/Components/Loader"
 import ProductCard from "@/Components/ProductCard"
+import CartSidePanel from "@/Components/CartSidePanel"
 
 const PAGE_LIMIT = 20
 
