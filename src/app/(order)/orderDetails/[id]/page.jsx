@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { toast } from "react-toastify";
-import { getOrderById, cancelOrder } from "@/lib/api";
+import { getOrderById, cancelOrder, getInvoice } from "@/lib/api";
 
 import { useAuth } from "@/context/AuthContext";
 import { motion } from "framer-motion";
@@ -98,7 +98,6 @@ function Timeline({ current, status }) {
 function InfoCard({ icon: Icon, title, children }) {
   return (
     <motion.div
-      whileHover={{ y: -4 }}
       className="bg-white border border-slate-200 rounded-xl p-6 space-y-3"
     >
       <div className="size-12 rounded-lg bg-black text-white flex items-center justify-center">
@@ -110,15 +109,13 @@ function InfoCard({ icon: Icon, title, children }) {
   );
 }
 
-function ProductRow({ name, meta, qty, price }) {
+function ProductRow({ name, meta, qty, price, simple }) {
   return (
-    <div className="flex justify-between items-center py-6 border-b border-slate-200 last:border-none">
-      <div>
-        <h4 className="font-bold text-lg">{name}</h4>
-        <p className="text-sm text-slate-500">{meta}</p>
-        <p className="text-sm mt-1">الكمية: {qty}</p>
-      </div>
-      <p className="font-bold text-xl">{price}</p>
+    <div className="flex justify-start flex-col items-start py-6 border-b border-slate-200 last:border-none">
+      <h4 className="font-bold text-gray-700">{name}</h4>
+      <p className="text-sm text-gray-700">{meta}</p>
+      <p className="text-sm mt-1">الكمية: {qty}</p>
+      <p className="font-bold text-xl mt-2">{price} {simple}</p>
     </div>
   );
 }
@@ -126,12 +123,12 @@ function ProductRow({ name, meta, qty, price }) {
 export default function OrderDetailsPage() {
   const { id } = useParams();
   const router = useRouter();
-  const { orders } = useAuth();
+  const { orders, user, simple } = useAuth();
   const [order, setOrder] = useState(null)
   const [loading, setLoading] = useState(false);
   const [cancelLoading, setCancelLoading] = useState(false);
   const currentStatus = statusToStep[order?.status] || "ordered";
-
+  const [invoceLoading, setInvoceLoading] = useState(false)
 
   useEffect(() => {
     const findOrder = async () => {
@@ -183,6 +180,25 @@ export default function OrderDetailsPage() {
       setCancelLoading(false);
     }
   };
+  const HandlegetInvoice = async () => {
+    try {
+      setInvoceLoading(true)
+      const res = await getInvoice(id);
+      if (res.seuccess) {
+        toast.success(res.message)
+      }
+    } catch (err) {
+      toast.error(err.message)
+    } finally {
+      setInvoceLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    if (!user) {
+      router.push('/');
+    }
+  }, [user]);
 
   if (loading) {
     return (
@@ -201,7 +217,7 @@ export default function OrderDetailsPage() {
   }
 
   return (
-    <main dir="rtl" className="max-w-[960px] mx-auto px-4 py-12 space-y-12 min-h-screen">
+    <main dir="rtl" className="container mx-auto px-4 py-12 space-y-12 min-h-screen">
 
       {/* Header */}
       <div className="text-center space-y-2">
@@ -280,7 +296,6 @@ export default function OrderDetailsPage() {
           )}
         </InfoCard>
 
-
         <InfoCard icon={FaWallet} title="طريقة الدفع">
           {order.paymentMethod === "cash"
             ? "الدفع عند الاستلام"
@@ -291,7 +306,7 @@ export default function OrderDetailsPage() {
 
       {/* Products */}
       <section className="bg-white rounded-xl border border-slate-200 p-8">
-        <h2 className="text-2xl font-bold mb-6 border-b pb-4">
+        <h2 className="text-2xl font-bold mb-6 border-b border-gray-200 pb-4">
           المنتجات ({order.items.length})
         </h2>
 
@@ -305,7 +320,8 @@ export default function OrderDetailsPage() {
                 : "—"
             }
             qty={item.quantity}
-            price={`${(item.price * item.quantity).toLocaleString()} ر.س`}
+            price={`${(item.price * item.quantity).toLocaleString()}`}
+            simple={simple}
           />
         ))}
       </section>
@@ -315,31 +331,36 @@ export default function OrderDetailsPage() {
         className="bg-white rounded-xl border border-slate-200 p-8 "
       >
         <div className="space-y-3 text-slate-600">
-          <div className="flex justify-between">
-            <span>المجموع الفرعي</span>
-            <span>{(order.totalPrice - order.shippingFee).toLocaleString()} ر.س</span>
-          </div>
-
-          <div className="flex justify-between">
-            <span>الشحن</span>
-            <span>{order.shippingFee.toLocaleString()} ر.س</span>
-          </div>
-
           <div className="flex justify-between text-xl font-bold text-black">
             <span>الإجمالي</span>
-            <span>{order.totalPrice.toLocaleString()} ر.س</span>
+            <span>{order.totalPrice.toLocaleString()} {simple}</span>
           </div>
-
+          {
+            order.shippingFee &&
+            <div className="flex justify-between">
+              <span>الشحن</span>
+              <span>{order.shippingFee.toLocaleString()} {simple}</span>
+            </div>
+          }
         </div>
 
-        <div className="flex flex-col md:flex-row items-center justify-center gap-5 pt-6 border-t border-gray-200 mt-6">
-          {order.status !== "cancelled" && (
-            <button className="w-full bg-linear-to-br from-black to-black/70 text-white py-3 rounded-lg cursor-pointer font-bold flex items-center justify-center gap-2 hover:-translate-y-1 duration-300 transition ease-in-out">
-              <FaPrint /> طباعة الفاتورة
-            </button>
-          )}
+        {order.status === "pending" && (
+          <div className="flex flex-col md:flex-row items-center justify-center gap-5 pt-6 border-t border-gray-200 mt-6">
+            {order.status !== "cancelled" && (
+              <button
+                onClick={HandlegetInvoice}
+                className="w-full bg-linear-to-br from-black to-black/70 text-white py-3 rounded-lg cursor-pointer font-bold flex items-center justify-center gap-2 hover:-translate-y-1 duration-300 transition ease-in-out">
+                {
+                  invoceLoading ?
+                    <span className="w-full h-full flex items-center justify-center"><Loader size={25} color="#fff" /></span>
+                    :
+                    <>
+                      <FaPrint /> طلب الفاتورة
+                    </>
+                }
+              </button>
+            )}
 
-          {order.status === "pending" && (
             <button
               onClick={handleCancelOrder}
               disabled={cancelLoading}
@@ -347,8 +368,8 @@ export default function OrderDetailsPage() {
             >
               {cancelLoading ? "جاري الإلغاء..." : "إلغاء الطلب"}
             </button>
-          )}
-        </div>
+          </div>
+        )}
 
       </motion.div>
 

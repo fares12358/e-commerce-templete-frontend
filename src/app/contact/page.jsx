@@ -24,13 +24,7 @@ export default function ContactPage() {
   const addressLink = setupData?.config?.address;
   const social = setupData?.config?.socialMedia;
 
-  if (setupLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center text-gray-400">
-        جاري التحميل...
-      </div>
-    );
-  }
+
   const handleSendContact = async (e) => {
     e.preventDefault();
 
@@ -58,8 +52,17 @@ export default function ContactPage() {
   };
 
 
-  if (!contact) return null;
+  if (!contact) return <div className="flex h-screen w-full items-center justify-center text-gray-500 text-xl">
+    لا يوجد محتوى متاح
+  </div>;
 
+  if (setupLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center ">
+        <Loader size={30} color="#000" />
+      </div>
+    );
+  }
   return (
     <main
       dir="rtl"

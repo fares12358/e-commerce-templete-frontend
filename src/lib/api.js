@@ -63,11 +63,12 @@ export const getOrders = async (params = {}) => {
     return api.get("/orders/my", { params: cleanParams });
 };
 
-export const createOrders = async () => api.get('/orders');
+/* ================= orders ================= */
+export const createOrders = async (data) => api.post('/orders', data);
 export const cancelOrder = async (id) => api.patch(`/orders/${id}`);
 export const getOrderById = (id) => api.get(`/orders/my/${id}`);
 /* ================= products ================= */
-export const getProductByID = async (id) => api.get(`/products/${id}`,);
+export const getProductByID = async (id) => api.get(`/products/details/${id}`,);
 
 export const getProductsByCat = (catId, params = {}) => {
     const cleanParams = {}
@@ -78,3 +79,16 @@ export const getProductsByCat = (catId, params = {}) => {
     })
     return api.get(`/categories/${catId}`, { params: cleanParams })
 }
+
+/* ================= invoice ================= */
+export const getInvoice = (id) => api.get(`/orders/invoice/${id}`)
+
+/* ================= search ================= */
+// 🔍 suggest أثناء الكتابة
+export const suggestProducts = (q, signal) =>
+    api.get(`/products/suggest?q=${encodeURIComponent(q)}`, { signal });
+
+// 🔎 صفحة النتائج
+export const searchProducts = (q, page = 1) =>
+    api.get(`/products/search?q=${encodeURIComponent(q)}&page=${page}`);
+

@@ -5,14 +5,10 @@ import {
   FaCheck,
   FaTruck,
   FaHome,
-  FaMoneyBillWave,
 } from "react-icons/fa";
 
 export default function OrderSuccess({
   orderId = "#INV-00001",
-  deliveryDate = "الخميس، 24 أكتوبر",
-  paymentMethod = "الدفع عند الاستلام",
-  status = "success",
   onTrack,
   onHome,
 }) {
@@ -42,19 +38,7 @@ export default function OrderSuccess({
 
         {/* Order details */}
         <div className="w-full bg-white border border-green-100 rounded-xl p-8 mb-10 shadow-sm space-y-6 text-right">
-
           <Row label="رقم الطلب" value={orderId} bold />
-
-          <Row label="التوصيل المتوقع" value={deliveryDate} />
-
-          <div className="flex justify-between items-center">
-            <span className="text-black/60 text-sm">طريقة الدفع</span>
-            <div className="flex items-center gap-2 font-medium">
-              <FaMoneyBillWave className="text-sm" />
-              {paymentMethod}
-            </div>
-          </div>
-
         </div>
 
         {/* Actions */}
@@ -62,7 +46,7 @@ export default function OrderSuccess({
 
           <button
             onClick={onTrack}
-            className="flex-1 px-8 py-4 rounded-xl text-white font-bold bg-gradient-to-b from-black to-neutral-700 hover:opacity-90 transition flex items-center justify-center gap-2"
+            className="flex-1 cursor-pointer px-8 py-3 rounded-md hover:-translate-y-1 duration-300 ease-in-out text-white font-bold bg-linear-to-br from-black to-black/70  transition flex items-center justify-center gap-2"
           >
             <FaTruck />
             تتبع الطلب
@@ -70,7 +54,7 @@ export default function OrderSuccess({
 
           <button
             onClick={onHome}
-            className="flex-1 px-8 py-4 rounded-xl border border-black/10 font-bold hover:bg-black/5 transition flex items-center justify-center gap-2"
+            className="flex-1 cursor-pointer px-8 py-3 rounded-md hover:-translate-y-1 duration-300 ease-in-out border border-gray-200 font-bold bg-linear-to-br from-gray-200 to-gray-100 text-gray-600 transition flex items-center justify-center gap-2"
           >
             <FaHome />
             العودة للرئيسية
@@ -78,10 +62,6 @@ export default function OrderSuccess({
 
         </div>
 
-        {/* Footer icons */}
-        <div className="flex gap-4 opacity-20 mt-12 text-xl">
-          🛍️ ❤️ ⭐
-        </div>
       </motion.div>
     </main>
   );

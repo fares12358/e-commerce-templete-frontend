@@ -24,6 +24,7 @@ export const AuthProvider = ({ children }) => {
   const [categoryCache, setCategoryCache] = useState({})
   const [addresses, setAddresses] = useState([]);
   const [orders, setOrders] = useState([]);
+  const [simple, setSimple] = useState('');
 
   const checkAuth = async () => {
     try {
@@ -61,6 +62,7 @@ export const AuthProvider = ({ children }) => {
       const res = await getSetupData();
       if (res.success) {
         setSetupData(res.data);
+        setSimple(res.data.config.simple);
       } else {
         setSetupData(null);
       }
@@ -99,7 +101,8 @@ export const AuthProvider = ({ children }) => {
         category, setCategory,
         categoryCache, setCategoryCache,
         addresses, setAddresses,
-        orders, setOrders
+        orders, setOrders,
+        simple, setSimple
       }}
     >
       {children}

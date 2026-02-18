@@ -17,7 +17,7 @@ export default function OrderFailed({
       <motion.div
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-[480px] text-center space-y-8"
+        className="w-full max-w-120 text-center space-y-8"
       >
 
         {/* Error circle */}
@@ -46,7 +46,7 @@ export default function OrderFailed({
 
           <button
             onClick={onRetry}
-            className="w-full py-4 px-8 rounded-lg font-bold text-white bg-gradient-to-b from-black to-neutral-700 hover:opacity-90 transition flex items-center justify-center gap-2"
+            className="w-full py-3 px-8 rounded-lg font-bold text-white bg-linear-to-br cursor-pointer from-black to-black/70 hover:-translate-y-1 duration-300 ease-in-out transition flex items-center justify-center gap-2"
           >
             حاول مرة أخرى
             <FaRedo className="text-sm" />
@@ -54,7 +54,7 @@ export default function OrderFailed({
 
           <button
             onClick={onSupport}
-            className="text-red-500 text-sm font-medium underline underline-offset-4 hover:opacity-80 transition flex items-center gap-2"
+            className="text-red-500 text-sm cursor-pointer font-medium transition flex items-center gap-2"
           >
             <FaHeadset />
             تواصل مع الدعم

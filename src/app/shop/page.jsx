@@ -16,7 +16,7 @@ const LIMIT = 20;
 export default function ShopPage() {
     const { products, setProducts } = useAuth()
     const [page, setPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(1);
+    const [totalPages, setTotalPages] = useState(0);
     const [loading, setLoading] = useState(false);
 
     const [open, setOpen] = useState(false);
@@ -26,7 +26,6 @@ export default function ShopPage() {
         setActiveProduct(product);
         setOpen(true);
     };
-
 
     const loadProducts = async (p = 1) => {
         try {
@@ -55,6 +54,7 @@ export default function ShopPage() {
         if (p < 1 || p > totalPages || p === page) return;
         loadProducts(p);
     };
+
 
     /* Smart page numbers */
     const getPages = () => {
@@ -88,62 +88,71 @@ export default function ShopPage() {
 
             {/* Products */}
             {loading ? (
-                <div className="w-full min-h-[50vh] flex items-center justify-center"><Loader size={30} color="#000" /></div>
+                <div className="w-full min-h-screen flex items-center justify-center"><Loader size={30} color="#000" /></div>
             ) : (
                 <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-12">
-                    {products.map((p) => (
-                        <ProductCard
-                            key={p._id}
-                            id={p._id}
-                            title={p.name}
-                            price={p.price}
-                            image={p.images[0].url}
-                            code={p.productNumber}
-                            comparePrice={p.comparePrice}
-                            stock={p.stock}
-                            category={p?.categoryId?.name}
-                            onAdd={() => openCart(p)}
-                        />
-                    ))}
+                    {
+                        products.length > 0 ?
+                            products.map((p) => (
+                                <ProductCard
+                                    key={p._id}
+                                    id={p._id}
+                                    title={p.name}
+                                    price={p.price}
+                                    image={p.images[0].url}
+                                    code={p.productNumber}
+                                    comparePrice={p.comparePrice}
+                                    stock={p.stock}
+                                    category={p?.categoryId?.name}
+                                    onAdd={() => openCart(p)}
+                                />
+                            ))
+                            :
+                            <div className="w-full min-h-screen h-full col-span-4 flex items-start pt-20 justify-center text-gray-500 text-xl">لا يوجد منتجات حاليا</div>
+                    }
                 </div>
             )}
 
+
             {/* Pagination */}
             {totalPages > 1 && (
-                <div className="flex justify-center gap-2 py-12 items-center">
+                <div className="flex justify-center items-center gap-1 pt-10 select-none flex-wrap mt-auto mb-0">
 
+                    {/* Previous */}
                     <button
                         disabled={page === 1}
                         onClick={() => changePage(page - 1)}
-                        className={`w-10 h-10 border rounded-lg flex items-center justify-center
-              ${page === 1 ? "opacity-40 cursor-not-allowed" : "hover:bg-black hover:text-white"}`}
+                        className="h-10 px-3 rounded-lg border border-gray-300 text-gray-700 bg-gray-200 hover:bg-gray-100 disabled:opacity-30 transition cursor-pointer"
                     >
                         <FaChevronRight />
                     </button>
 
-                    {getPages().map((p, i) =>
-                        p === "..." ? (
-                            <span key={i} className="px-2 text-gray-400">...</span>
+                    {/* Pages */}
+                    {getPages().map((p, index) =>
+                        p === "start-ellipsis" || p === "end-ellipsis" ? (
+                            <span key={index} className="px-2 text-gray-400 font-bold">
+                                ...
+                            </span>
                         ) : (
-                            <motion.button
-                                whileTap={{ scale: 0.9 }}
-                                key={i}
+                            <button
+                                key={index}
                                 onClick={() => changePage(p)}
-                                className={`w-10 h-10 rounded-lg font-bold
-                  ${page === p
-                                        ? "bg-black text-white"
-                                        : "border hover:bg-black hover:text-white"}`}
+                                className={`min-w-10 h-10 px-3 rounded-lg font-bold text-sm transition-all duration-200 cursor-pointer
+            ${page === p
+                                        ? "bg-linear-to-br from-black to-black/70 text-white shadow-sm scale-105"
+                                        : "border border-gray-300 hover:bg-gray-100"
+                                    }`}
                             >
                                 {p}
-                            </motion.button>
+                            </button>
                         )
                     )}
 
+                    {/* Next */}
                     <button
                         disabled={page === totalPages}
                         onClick={() => changePage(page + 1)}
-                        className={`w-10 h-10 border rounded-lg flex items-center justify-center
-              ${page === totalPages ? "opacity-40 cursor-not-allowed" : "hover:bg-black hover:text-white"}`}
+                        className="h-10 px-3 rounded-lg border border-gray-300 text-gray-700 bg-gray-200 hover:bg-gray-100 disabled:opacity-30 transition"
                     >
                         <FaChevronLeft />
                     </button>

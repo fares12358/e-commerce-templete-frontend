@@ -16,7 +16,7 @@ function MainImage({ src }) {
       initial={{ opacity: 0.4, scale: 0.96 }}
       animate={{ opacity: 1, scale: 1 }}
       className="bg-gray-100 border border-gray-200 rounded-xl overflow-hidden shadow-md md:order-2 -order-1
-                 w-full h-[420px] sm:h-[520px] lg:h-[620px] p-5"
+                 w-full h-105 sm:h-130 lg:h-155 p-5"
     >
       <img
         src={src}
@@ -28,7 +28,7 @@ function MainImage({ src }) {
 }
 
 export default function ProductDetails() {
-  const { setupData, products } = useAuth()
+  const { setupData, products, simple } = useAuth()
   const params = useParams()
   const id = params?.id
 
@@ -95,7 +95,6 @@ export default function ProductDetails() {
     }
   };
 
-
   useEffect(() => {
     if (!id) return
 
@@ -142,25 +141,42 @@ export default function ProductDetails() {
   }
 
   return (
-    <div className="container mx-auto px-6 py-14 grid lg:grid-cols-12 gap-14">
+    <div className="container mx-auto px-4 sm:px-6 py-10 lg:py-14 
+                grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14">
 
       {/* Images */}
-      <div className="lg:col-span-7 flex flex-col md:flex-row gap-6">
+      <div className="lg:col-span-7 w-full max-w-full">
 
-        <div className="flex md:flex-col flex-row gap-4 max-w-full">
+        {/* Main Image */}
+        <div className="w-full aspect-square bg-gray-100 rounded-xl border border-gray-200 shadow-sm p-4 overflow-hidden">
+          <img
+            src={activeImage}
+            className="w-full h-full object-contain"
+            alt="product"
+          />
+        </div>
+
+        {/* Thumbnails */}
+        <div className="mt-4 flex gap-3 overflow-x-auto pb-2">
           {product.images.map((img) => (
             <button
               key={img}
               onClick={() => setActiveImage(img)}
-              className={`w-20 h-20 rounded-lg cursor-pointer group shadow-md overflow-hidden border ${activeImage === img ? "border-black" : "border-gray-200"
-                }`}
+              className={`
+        shrink-0 w-16 h-16 sm:w-20 sm:h-20
+        rounded-lg border overflow-hidden bg-white
+        ${activeImage === img ? "border-black" : "border-gray-200"}
+      `}
             >
-              <img src={img} className="w-full h-full object-contain group-hover:scale-110 transition ease-in-out duration-300" />
+              <img
+                src={img}
+                className="w-full h-full object-contain"
+                alt="thumb"
+              />
             </button>
           ))}
         </div>
 
-        <MainImage src={activeImage} />
       </div>
 
       {/* Details */}
@@ -179,11 +195,14 @@ export default function ProductDetails() {
         </div>
 
         <div className="flex items-end gap-4">
+          {
+            product?.comparePrice > product?.price &&
+            <span className="text-gray-300 line-through text-xl">
+              {product?.comparePrice?.toLocaleString()}
+            </span>
+          }
           <span className="text-4xl font-bold">
-            {product?.price?.toLocaleString()}
-          </span>
-          <span className="text-gray-300 line-through text-xl">
-            {product?.comparePrice?.toLocaleString()}
+            {product?.price?.toLocaleString()} {simple}
           </span>
         </div>
 

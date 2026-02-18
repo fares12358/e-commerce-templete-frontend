@@ -63,27 +63,21 @@ export default function AddressesPage() {
   const handleConfirm = async () => {
     try {
       setActionLoading(true);
-
       let res;
-
       if (modalType === "delete") {
         res = await deleteLocation(selectedId);
         toast.success("تم حذف العنوان بنجاح");
       }
-
       if (modalType === "default") {
         res = await setDefaultLocation(selectedId);
         toast.success("تم تعيين العنوان كافتراضي");
       }
-
       if (res?.success) {
         setAddresses(res.data);
       }
-
       setModalOpen(false);
       setSelectedId(null);
       setModalType(null);
-
     } catch (err) {
       toast.error(err.message);
     } finally {
@@ -103,8 +97,7 @@ export default function AddressesPage() {
   }, [user])
 
   return (
-    <main dir="rtl" className="min-h-screen bg-white px-4 py-14">
-
+    <main dir="rtl" className="min-h-screen px-4 py-14">
       {/* Title */}
       <div className="text-center mb-12">
         <h1 className="text-4xl font-black mb-2">عناويني</h1>
@@ -114,7 +107,7 @@ export default function AddressesPage() {
       </div>
 
       {/* Add Button */}
-      <div className="container mx-auto flex justify-end mb-10">
+      <div className="container mx-auto flex justify-start mb-10">
         <button
           onClick={() => (router.push("/addAddress"))}
           className="bg-linear-to-br from-black to-black/70 text-white px-8 py-3 cursor-pointer rounded-lg font-bold flex items-center gap-2 hover:-translate-y-1 duration-300 transition"
@@ -140,7 +133,6 @@ export default function AddressesPage() {
         </div>
       )}
 
-
       {/* Empty */}
       {!loading && addresses.length === 0 && (
         <div className="text-center text-gray-500 font-bold">
@@ -154,7 +146,7 @@ export default function AddressesPage() {
           addresses.map((addr) => (
             <motion.div
               key={addr._id}
-              className={`p-6 rounded-xl flex flex-col justify-between transition-all duration-300 shadow-sm
+              className={`p-6 bg-white rounded-xl flex flex-col justify-between transition-all duration-300 shadow-sm
               ${addr.default
                   ? "border border-t-gray-200 border-l-gray-200 border-r-6 border-b-6 border-black  shadow-md"
                   : "border border-gray-200 "

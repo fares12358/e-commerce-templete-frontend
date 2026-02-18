@@ -6,6 +6,7 @@ import { useState } from "react";
 import { FaShoppingCart } from "react-icons/fa";
 import { toast } from "react-toastify";
 import Loader from "./Loader";
+import { useAuth } from "@/context/AuthContext";
 
 export default function CartSidePanel({
     selections,
@@ -18,6 +19,7 @@ export default function CartSidePanel({
     comparePrice,
     onClose
 }) {
+  const { simple } = useAuth()
     const [quantity, setQuantity] = useState(1);
     const [selected, setSelected] = useState({});
     const [loading, setLoading] = useState(false)
@@ -108,8 +110,7 @@ export default function CartSidePanel({
                                     </del>
                                 )
                             }
-                            {price}
-                            $
+                            {price} {simple}
                         </div>
 
                         {/* Quantity Stepper */}

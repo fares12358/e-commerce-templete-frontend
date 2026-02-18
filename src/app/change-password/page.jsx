@@ -1,14 +1,18 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { FaEye, FaEyeSlash, FaLock, FaStar } from "react-icons/fa";
 import Link from "next/link";
 import { toast } from "react-toastify";
 import Loader from "@/Components/Loader";
 import { updatePassword } from "@/lib/api";
+import { useAuth } from "@/context/AuthContext";
+import { useRouter } from "next/navigation";
 
 export default function ChangePasswordPage() {
+  const { user } = useAuth()
+  const router = useRouter()
   const [current, setCurrent] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
@@ -51,6 +55,12 @@ export default function ChangePasswordPage() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (!user) {
+      router.push('/');
+    }
+  }, [user]);
 
   return (
     <main

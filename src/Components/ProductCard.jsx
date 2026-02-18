@@ -8,6 +8,7 @@ import {
 } from "react-icons/fa";
 import { useState } from "react";
 import { toast } from "react-toastify";
+import { useAuth } from "@/context/AuthContext";
 
 export default function ProductCard({
   title,
@@ -20,6 +21,7 @@ export default function ProductCard({
   category,
   onAdd
 }) {
+  const { simple } = useAuth()
   const router = useRouter();
   const inStock = stock > 0;
   const [open, setOpen] = useState(false);
@@ -79,10 +81,6 @@ export default function ProductCard({
 
         {/* Price */}
         <div className="flex items-baseline gap-2">
-          <span className="text-md font-semibold text-gray-900 flex items-center">
-            <FaDollarSign className="text-green-500 text-sm" />
-            {price}
-          </span>
           {
             comparePrice > price && (
               <del className="text-sm text-gray-400 font-semibold">
@@ -90,6 +88,9 @@ export default function ProductCard({
               </del>
             )
           }
+          <span className="text-md font-semibold text-gray-900 flex items-center">
+            {price} {simple}
+          </span>
         </div>
 
         {/* Add to cart */}

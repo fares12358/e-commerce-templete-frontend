@@ -8,6 +8,7 @@ import CustomSelect from "@/Components/CustomSelect"
 import Loader from "@/Components/Loader"
 import ProductCard from "@/Components/ProductCard"
 import CartSidePanel from "@/Components/CartSidePanel"
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa"
 
 const PAGE_LIMIT = 20
 
@@ -107,7 +108,7 @@ export default function CategoryDetails() {
           <h1 className="md:text-4xl text-xl font-black">
             {categoryInfo?.name || "—"}
           </h1>
-          <p className={`${pagination.total > 0 ? 'text-green-600 bg-green-100':'text-red-600 bg-red-100' }  w-fit py-1 px-4 text-xs md:text-[16px] rounded-md mt-1 font-semibold`}>
+          <p className={`${pagination.total > 0 ? 'text-green-600 bg-green-100' : 'text-red-600 bg-red-100'}  w-fit py-1 px-4 text-xs md:text-[16px] rounded-md mt-1 font-semibold`}>
             {pagination.total ?? 0} من المنتجات
           </p>
         </div>
@@ -154,23 +155,40 @@ export default function CategoryDetails() {
 
       {/* ===== Pagination ===== */}
       {pagination.totalPages > 1 && (
-        <div className="flex justify-center gap-2 mt-12">
+        <div className="flex justify-center items-center gap-1 pt-10 select-none flex-wrap mt-auto mb-0">
+          {/* Previous */}
+          <button
+            disabled={page === 1}
+            onClick={() => setPage(prev => prev - 1)}
+            className="h-10 px-3 rounded-lg border border-gray-300 text-gray-700 bg-gray-200 hover:bg-gray-100 disabled:opacity-30 transition cursor-pointer"
+          >
+            <FaChevronRight />
+          </button>
+
           {Array.from({ length: pagination.totalPages }).map((_, i) => {
             const p = i + 1
             return (
               <button
                 key={p}
                 onClick={() => setPage(p)}
-                className={`px-4 py-2 rounded-lg border font-semibold
+                className={`min-w-10 h-10 px-3 rounded-lg font-bold text-sm transition-all duration-200 cursor-pointer
                   ${p === page
-                    ? "bg-black text-white border-black"
-                    : "bg-white border-gray-300 hover:border-black"}
+                    ? "bg-linear-to-br from-black to-black/70 text-white"
+                    : "border border-gray-300 hover:bg-gray-100"}
                 `}
               >
                 {p}
               </button>
             )
           })}
+          {/* Next */}
+          <button
+            disabled={page === pagination.totalPages}
+            onClick={() => setPage(prev => prev + 1)}
+            className="h-10 px-3 rounded-lg border border-gray-300 text-gray-700 bg-gray-200 hover:bg-gray-100 disabled:opacity-30 transition"
+          >
+            <FaChevronLeft />
+          </button>
         </div>
       )}
 

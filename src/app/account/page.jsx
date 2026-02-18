@@ -29,7 +29,7 @@ export default function AccountPage() {
     if (!user) return
     return (
         <main
-            className="flex-1 w-full max-w-240 mx-auto px-4 md:px-10 py-12 text-black"
+            className="flex-1 w-full h-screen max-w-240 mx-auto px-4 md:px-10 py-12 text-black"
             dir="rtl"
         >
             {/* Profile */}
@@ -78,7 +78,7 @@ export default function AccountPage() {
                 <AccountItem
                     icon={<FaShoppingCart />}
                     title="عربتي"
-                    desc="3 عناصر في انتظارك"
+                    desc=" عناصرك في انتظارك"
                     link='/cart'
                 />
 
@@ -102,19 +102,6 @@ export default function AccountPage() {
 
                 </div>
             </div>
-
-            {/* Footer */}
-            <footer className="mt-16 text-center">
-                <p className="text-xs text-zinc-400 tracking-[0.2em]">
-                    © 2024 منصة MINIMALIST
-                </p>
-
-                <div className="mt-4 flex justify-center gap-6 text-xs text-zinc-500">
-                    <a className="hover:text-black">سياسة الخصوصية</a>
-                    <a className="hover:text-black">شروط الخدمة</a>
-                    <a className="hover:text-black">مركز المساعدة</a>
-                </div>
-            </footer>
         </main>
     );
 }

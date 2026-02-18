@@ -17,7 +17,7 @@ import ConfirmModal from "@/Components/ConfirmModal";
 
 export default function CartPage() {
     const router = useRouter()
-    const { user, cart, setCart, setupData } = useAuth()
+    const { user, cart, setCart, setupData, simple } = useAuth()
 
     const [clearing, setClearing] = useState(false);
     const [loadingItem, setLoadingItem] = useState(false);
@@ -208,8 +208,8 @@ export default function CartPage() {
                                                         ))}
                                                     </div>
                                                 </div>
-                                                <p className="text-lg font-bold hidden sm:block">
-                                                    {(item.price * item.quantity).toFixed(2)}
+                                                <p className="text-lg font-bold hidden sm:block w-full">
+                                                    {(item.price *  (pendingQty[item.itemId] ?? item.quantity)).toLocaleString()} {simple}
                                                 </p>
                                             </div>
 
@@ -268,7 +268,7 @@ export default function CartPage() {
 
                                         <div className="flex sm:hidden items-center justify-evenly w-full col-span-3">
                                             <p className="text-lg font-bold">
-                                                {(item.price * (pendingQty[item.itemId] ?? item.quantity)).toFixed(2)}
+                                                {(item.price * (pendingQty[item.itemId] ?? item.quantity)).toLocaleString()} {simple}
                                             </p>
                                             <button
                                                 onClick={() => {
@@ -332,23 +332,23 @@ export default function CartPage() {
                                 </h3>
 
                                 <div className="space-y-4 border-b pb-6">
-                                    <Row label="المجموع الفرعي" value={`${subtotal.toFixed(2)}`} />
+                                    <Row label="المجموع الفرعي" value={`${subtotal.toLocaleString()} ${simple}`} />
                                     {
                                         setupData?.config?.vat > 0 && (
-                                            <Row label={`الضريبة التقديرية(${setupData?.config?.vat}%) `} value={`${tax}`} />
+                                            <Row label={`الضريبة التقديرية(${setupData?.config?.vat}%) `} value={`${tax.toLocaleString()} ${simple}`} />
                                         )
                                     }
                                 </div>
 
                                 <div className="flex justify-between text-xl font-black">
                                     <span>الإجمالي</span>
-                                    <span>{total}</span>
+                                    <span>{total.toLocaleString()} {simple}</span>
                                 </div>
                                 {
                                     setupData?.config?.shipment > 0 || setupData?.config?.shipment && (
                                         <div className="flex items-center justify-between font-semibold text-gray-500">
                                             <p className="">الشحن</p>
-                                            <p className="">{setupData?.config?.shipment}</p>
+                                            <p className="">{setupData?.config?.shipment} {simple}</p>
                                         </div>
                                     )
                                 }

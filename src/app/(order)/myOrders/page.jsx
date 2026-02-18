@@ -13,11 +13,13 @@ import { toast } from "react-toastify";
 import CustomSelect from "@/Components/CustomSelect";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
+import Loader from "@/Components/Loader";
+import { useRouter } from "next/navigation";
 
 const statusStyles = {
   pending: " bg-linear-to-br from-yellow-700 to-yellow-400 text-white",
   delivered: " bg-linear-to-br from-green-700 to-green-400 text-white",
-  cancelled: " bg-linear-to-br from-rose-700 to-rose-400 text-white",
+  cancelled: " bg-linear-to-br from-red-700 to-red-400 text-white",
   confirmed: " bg-linear-to-br from-blue-700 to-blue-400 text-white",
   shipped: " bg-linear-to-br from-fuchsia-700 to-fuchsia-400 text-white",
 };
@@ -36,8 +38,7 @@ const sortOptions = [
   { value: "old", label: "الأقدم أولاً" },
 ];
 
-
-function OrderCard({ order }) {
+function OrderCard({ order, simple }) {
   const { orderNumber, status, createdAt, items, totalPrice, paymentMethod, _id } = order;
 
   const formatDate = (date) =>
@@ -62,7 +63,7 @@ function OrderCard({ order }) {
             #{orderNumber}
           </h2>
         </div>
-        
+
         <span
           className={`px-4 py-2 w-fit rounded-md text-xs font-bold whitespace-nowrap ${statusStyles[status]}`}
         >
@@ -101,7 +102,7 @@ function OrderCard({ order }) {
         <div>
           <p className="text-slate-400 text-xs mb-1">الإجمالي</p>
           <p className="text-lg font-bold text-black">
-            {totalPrice.toLocaleString()} ر.س
+            {totalPrice.toLocaleString()} {simple}
           </p>
         </div>
       </div>
@@ -115,15 +116,17 @@ function OrderCard({ order }) {
     </motion.div>
   );
 }
+
 export default function MyOrdersPage() {
-  const {orders, setOrders } = useAuth();
+  const { orders, setOrders, user, simple } = useAuth();
   const [filter, setFilter] = useState("all");
   const [sort, setSort] = useState("new");
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(false);
-
+  const router = useRouter();
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const fetchOrders = async () => {
     try {
@@ -135,7 +138,7 @@ export default function MyOrdersPage() {
       };
 
       if (filter !== "all") params.status = filter;
-
+      if (search) params.orderNumber = search;
       const res = await getOrders(params);
 
       setOrders(res.data);
@@ -149,38 +152,48 @@ export default function MyOrdersPage() {
 
   useEffect(() => {
     fetchOrders();
-  }, [filter, sort, page]);
+  }, [filter, sort, page, search]);
 
   // 🔥 Pagination Logic
-  const renderPagination = () => {
+  const getVisiblePages = () => {
     const pages = [];
+    const siblingCount = 2; // عدد الصفحات حول الصفحة الحالية
 
-    if (totalPages <= 7) {
-      for (let i = 1; i <= totalPages; i++) {
-        pages.push(i);
-      }
-    } else {
-      pages.push(1, 2, 3);
+    const start = Math.max(2, page - siblingCount);
+    const end = Math.min(totalPages - 1, page + siblingCount);
 
-      if (page > 4) {
-        pages.push("...");
-      }
+    // أول صفحة
+    pages.push(1);
 
-      if (page > 3 && page < totalPages - 2) {
-        pages.push(page);
-      }
+    // نقاط قبل
+    if (start > 2) pages.push("start-ellipsis");
 
-      if (page < totalPages - 3) {
-        pages.push("...");
-      }
-
-      pages.push(totalPages - 2, totalPages - 1, totalPages);
+    // الصفحات حول الحالية
+    for (let i = start; i <= end; i++) {
+      pages.push(i);
     }
+
+    // نقاط بعد
+    if (end < totalPages - 1) pages.push("end-ellipsis");
+
+    // آخر صفحة
+    if (totalPages > 1) pages.push(totalPages);
+
     return pages;
   };
 
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [page]);
+
+  useEffect(() => {
+    if (!user) {
+      router.push('/');
+    }
+  }, [user]);
+
   return (
-    <main dir="rtl" className="container min-h-screen mx-auto px-4 py-12 space-y-8">
+    <main dir="rtl" className="container min-h-screen mx-auto px-4 py-12 space-y-8 flex flex-col">
       {/* Header */}
       <div className="flex items-center gap-3">
         <FaBoxOpen size={25} />
@@ -188,14 +201,24 @@ export default function MyOrdersPage() {
       </div>
 
       {/* Search */}
-      <div className="relative">
+      <div className="relative flex">
         <FaSearch className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400" />
         <input
-          className="w-full h-14 pr-12 pl-4 rounded-md bg-gray-100 focus:outline-none focus:ring-1 focus:ring-gray-200 shadow-sm"
+          className="w-full h-14 pr-12 pl-4 rounded-tr-md rounded-br-md bg-white focus:outline-none focus:ring-1 focus:ring-gray-200 shadow-sm"
           placeholder="ابحث عن رقم الطلب"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
         />
+
+        <button
+          onClick={() => {
+            setPage(1);
+            setSearch(searchTerm);
+          }}
+          className="bg-linear-to-br from-black to-black/70 py-4 px-6 rounded-tl-md rounded-bl-md font-semibold shadow-md text-white cursor-pointer hover:-translate-y-1 transition ease-in-out duration-300"
+        >
+          بحث
+        </button>
       </div>
 
       {/* Filters + Sort */}
@@ -228,17 +251,15 @@ export default function MyOrdersPage() {
             }}
           />
         </div>
-
       </div>
-
 
       {/* Orders */}
       {loading ? (
-        <p className="text-center py-20">جاري التحميل...</p>
+        <div className="w-full min-h-[50vh] flex items-center justify-center"><Loader size={30} color="#000" /></div>
       ) : orders?.length ? (
         <div className="space-y-4">
           {orders.map((order) => (
-            <OrderCard key={order._id} order={order} />
+            <OrderCard key={order._id} order={order} simple={simple} />
           ))}
         </div>
       ) : (
@@ -249,27 +270,31 @@ export default function MyOrdersPage() {
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex justify-center items-center gap-2 pt-10">
+        <div className="flex justify-center items-center gap-1 pt-10 select-none flex-wrap mt-auto mb-0">
+
+          {/* Previous */}
           <button
             disabled={page === 1}
-            onClick={() => setPage(page - 1)}
-            className="size-10 border rounded-lg disabled:opacity-40"
+            onClick={() => setPage(prev => prev - 1)}
+            className="h-10 px-3 rounded-lg border border-gray-300 text-gray-700 bg-gray-200 hover:bg-gray-100 disabled:opacity-30 transition cursor-pointer"
           >
             <FaChevronRight />
           </button>
 
-          {renderPagination().map((p, index) =>
-            p === "..." ? (
-              <span key={index} className="px-2">
+          {/* Pages */}
+          {getVisiblePages().map((p, index) =>
+            p === "start-ellipsis" || p === "end-ellipsis" ? (
+              <span key={index} className="px-2 text-gray-400 font-bold">
                 ...
               </span>
             ) : (
               <button
                 key={index}
                 onClick={() => setPage(p)}
-                className={`size-10 rounded-lg font-bold ${page === p
-                  ? "bg-black text-white"
-                  : "border"
+                className={`min-w-10 h-10 px-3 rounded-lg font-bold text-sm transition-all duration-200 cursor-pointer
+            ${page === p
+                    ? "bg-linear-to-br from-black to-black/70 text-white shadow-sm scale-105"
+                    : "border border-gray-300 hover:bg-gray-100"
                   }`}
               >
                 {p}
@@ -277,15 +302,18 @@ export default function MyOrdersPage() {
             )
           )}
 
+          {/* Next */}
           <button
             disabled={page === totalPages}
-            onClick={() => setPage(page + 1)}
-            className="size-10 border rounded-lg disabled:opacity-40"
+            onClick={() => setPage(prev => prev + 1)}
+            className="h-10 px-3 rounded-lg border border-gray-300 text-gray-700 bg-gray-200 hover:bg-gray-100 disabled:opacity-30 transition"
           >
             <FaChevronLeft />
           </button>
+
         </div>
       )}
+
     </main>
   );
 }

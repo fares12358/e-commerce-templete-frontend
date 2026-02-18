@@ -40,6 +40,7 @@ const initialForm = {
     lng: null,
 };
 
+
 export default function AddAddressPage() {
     const { user, setAddresses } = useAuth()
     const mapRef = useRef(null);
