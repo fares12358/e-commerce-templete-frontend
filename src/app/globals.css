@@ -74,3 +74,11 @@ body {
 .edge-shadow-right {
   background: linear-gradient(to left, white 0%, transparent 100%);
 }
+/* hide scrollbar but keep scrolling */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

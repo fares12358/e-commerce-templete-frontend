@@ -19,14 +19,16 @@ export default function CartSidePanel({
     comparePrice,
     onClose
 }) {
-  const { simple } = useAuth()
+    const { simple, user } = useAuth()
     const [quantity, setQuantity] = useState(1);
     const [selected, setSelected] = useState({});
     const [loading, setLoading] = useState(false)
     const handleSelect = (name, value) => {
         setSelected(prev => ({ ...prev, [name]: value }));
     };
+    
     const handleAdd = async () => {
+        if (!user) return
         if (quantity > stock) {
             toast.error("الكمية غير متاحة");
             return;

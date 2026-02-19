@@ -86,7 +86,7 @@ export default function CategorySlider() {
                         key={i}
                         className="shrink-0 flex flex-col items-center gap-3 group cursor-pointer"
                     >
-                        <div className="w-24 h-24 rounded-2xl overflow-hidden bg-gray-100 shadow-sm">
+                        <div className="size-24 rounded-2xl overflow-hidden bg-gray-100 shadow-sm">
                             <img
                                 src={cat.image.url}
                                 className="w-full h-full object-cover group-hover:scale-110 transition-all duration-300"
@@ -104,7 +104,7 @@ export default function CategorySlider() {
                 progress <= 0 ? '' :
                     <div className="h-1 w-full bg-gray-100/70 rounded-full overflow-hidden">
                         <div
-                            className="h-full bg-blue-300 transition-all duration-200"
+                            className="h-full bg-linear-to-br from-black/70 to-black/20 transition-all duration-200"
                             style={{ width: `${progress}%` }}
                         />
                     </div>

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import {
   FaShoppingCart,
   FaDollarSign,
+  FaStar,
 } from "react-icons/fa";
 import { useState } from "react";
 import { toast } from "react-toastify";
@@ -19,9 +20,10 @@ export default function ProductCard({
   id,
   comparePrice,
   category,
-  onAdd
+  onAdd,
+  star = false
 }) {
-  const { simple } = useAuth()
+  const { simple, user } = useAuth()
   const router = useRouter();
   const inStock = stock > 0;
   const [open, setOpen] = useState(false);
@@ -38,22 +40,28 @@ export default function ProductCard({
   return (
     <motion.div
       whileHover={{ y: -6 }}
-      className="group bg-white w-full max-w-sm overflow-hidden rounded-xl border border-gray-100 shadow-sm hover:shadow-xl transition"
+      className="group bg-white w-full max-w-sm overflow-hidden rounded-xl p-2 border border-gray-100 shadow-sm hover:shadow-xl transition flex flex-col items-start justify-start"
       dir="rtl"
     >
       {/* Image */}
       <div
         onClick={() => router.push(`/product/${id}`)}
-        className="relative aspect-square bg-gray-50 flex items-center justify-center p-8 overflow-hidden cursor-pointer">
+        className="relative h-50 md:h-60 w-full md:aspect-square bg-gray-50 flex items-center justify-center overflow-hidden cursor-pointer mx-auto">
         <img
           src={image}
           alt={title}
-          className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-110"
+          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 rounded-md"
         />
+        {
+          star &&
+          <span className=" absolute top-0 left-0 bg-white p-2 rounded-br-xl flex items-center justify-center">
+            <FaStar className="text-amber-300 text-2xl drop-shadow-md" />
+          </span>
+        }
       </div>
 
       {/* Content */}
-      <div className="p-6 flex flex-col gap-4">
+      <div className="p-6 flex flex-col gap-4 w-full">
 
         {/* Stock + Code */}
         <div className="flex justify-between items-center text-xs font-medium">
@@ -89,13 +97,17 @@ export default function ProductCard({
             )
           }
           <span className="text-md font-semibold text-gray-900 flex items-center">
-            {price} {simple}
+            {price.toLocaleString()} {simple}
           </span>
         </div>
 
         {/* Add to cart */}
         <button
           onClick={(e) => {
+            if (!user) {
+              toast.error('تسجيل الدخول مطلوب')
+              return
+            }
             e.stopPropagation();
             onAdd();
           }}

@@ -46,13 +46,13 @@ export default function AdsSlider() {
         >
 
           {/* Text */}
-          <div className="w-full md:w-1/2 space-y-6 text-right order-1 md:order mt-10 md:mt-0">
+          <div className="w-full md:w-1/2 space-y-4 text-right order-1 md:order mt-10 md:mt-0">
 
-            <span className="px-4 py-1.5 bg-black text-white text-xs font-bold rounded-full">
+            <span className="px-4 py-2 black-gradient text-white text-xs font-bold rounded-md">
               {slide.tag}
             </span>
 
-            <h2 className="text-5xl md:text-6xl font-bold mt-5">
+            <h2 className="text-3xl md:text-6xl font-bold mt-5">
               {slide.title}
             </h2>
 
@@ -62,7 +62,7 @@ export default function AdsSlider() {
 
             <Link
               href={slide.link ? `/product/${slide.link}` : "/shop"}
-              className="black-gradient px-8 py-2 text-white font-bold rounded-md inline-block hover:-translate-y-1 duration-300 ease-in-out"
+              className="black-gradient px-8 py-2 text-white font-bold rounded-md inline-block hover:-translate-y-1 duration-300 ease-in-out mb-5 md:mb-0"
             >
               تسوق الآن
             </Link>
@@ -108,7 +108,7 @@ export default function AdsSlider() {
               initial={{ width: "0%" }}
               animate={{ width: "100%" }}
               transition={{ duration: SLIDE_TIME / 1000, ease: "linear" }}
-              className="h-full bg-black"
+              className="h-full black-gradient"
             />
           </div>
         </>

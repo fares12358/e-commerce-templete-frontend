@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useState } from "react";
-import { FaShoppingCart, FaUser, FaBars, FaShoppingBag, FaSignOutAlt } from "react-icons/fa";
+import { FaShoppingCart, FaUser, FaBars, FaShoppingBag, FaSignOutAlt, FaTimes } from "react-icons/fa";
 import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import { logoutUser } from "@/lib/api";
@@ -41,9 +41,9 @@ export default function Navbar() {
     } finally {
       setLogoutLoading(false);
       setViewConfirm(false)
+      setShowMenu(false);
     }
   };
-
 
   return (
     <header className="sticky top-0 z-50 border-b border-gray-200 bg-white/80 backdrop-blur-md">
@@ -98,34 +98,45 @@ export default function Navbar() {
           >
             تواصل معنا
           </Link>
-
         </div>
 
         {/* Actions */}
         <div className="flex items-center gap-3">
-          <div className="">
-            <button className="relative p-2 rounded-full hover:bg-gray-100 group cursor-pointer" onClick={() => { if (user) { router.push('/cart') } else { toast.error('سجل الدخول لفتح الصفحة') } }}>
-              <FaShoppingCart className={`group-hover:text-blue-400  transition-all duration-300 ease-in-out ${pathname === "/cart" ? "text-blue-400" : "text-gray-400"
-                }`} />
-              {
-                cart.length > 0 && (
-                  <span className="absolute -top-1 -left-1 bg-blue-400 text-white text-[10px] min-w-4 w-4 h-4 p-1 rounded-sm flex items-center justify-center">
-                    {cart.length}
-                  </span>
-                )
-              }
-            </button>
+          <div className="flex items-center gap-1">
+            {
+              user &&
+              <>
+                <button className="relative p-2 rounded-full hover:bg-gray-100 group cursor-pointer" onClick={() => { setShowMenu(false); if (user) { router.push('/cart') } else { toast.error('سجل الدخول لفتح الصفحة') } }}>
+                  <FaShoppingCart className={`group-hover:text-blue-400  transition-all duration-300 ease-in-out ${pathname === "/cart" ? "text-blue-400" : "text-gray-400"
+                    }`} />
+                  {
+                    cart.length > 0 && (
+                      <span className="absolute -top-1 -left-1 bg-blue-400 text-white text-[10px] min-w-4 w-4 h-4 p-1 rounded-sm flex items-center justify-center">
+                        {cart.length}
+                      </span>
+                    )
+                  }
+                </button>
 
-            <button className="p-2 rounded-full hover:bg-gray-100 group cursor-pointer" onClick={() => { if (user) { router.push('/account') } else { toast.error('سجل الدخول لفتح الصفحة') } }}>
-              <FaUser className={`group-hover:text-blue-400 transition-all duration-300 ease-in-out ${pathname === "/account" ? "text-blue-400" : "text-gray-400"}`} />
-            </button>
-
+                <button className="p-2 rounded-full hover:bg-gray-100 group cursor-pointer" onClick={() => { setShowMenu(false); if (user) { router.push('/account') } else { toast.error('سجل الدخول لفتح الصفحة') } }}>
+                  <FaUser className={`group-hover:text-blue-400 transition-all duration-300 ease-in-out ${pathname === "/account" ? "text-blue-400" : "text-gray-400"}`} />
+                </button>
+              </>
+            }
+            {!user &&
+              <Link href={'/auth/login'} onClick={() => setShowMenu(false)} className="py-3 ml-2 px-4 bg-linear-to-br text-xs md:hidden from-blue-600 to-blue-400 text-white rounded-sm shadow-sm cursor-pointer">تسجيل الدخول</Link>
+            }
             {/* Mobile menu button */}
             <button
               onClick={() => { setShowMenu(!showMenu) }}
-              className="md:hidden p-2 rounded-lg hover:bg-gray-100"
+              className="md:hidden p-3 rounded-md hover:bg-gray-100 bg-linear-to-br from-black to-black/70 text-white"
             >
-              <FaBars />
+              {
+                showMenu ?
+                  <FaTimes />
+                  :
+                  <FaBars />
+              }
             </button>
           </div>
           {
@@ -152,7 +163,7 @@ export default function Navbar() {
 
       {/* Mobile simple menu (not drawer) */}
       {showMenu && (
-        <div className="md:hidden bg-white px-6 py-4 space-y-4 text-sm font-medium" dir="rtl">
+        <div className="md:hidden border-b border-gray-200 bg-white/80 backdrop-blur-md px-6 py-6 space-y-6 text-sm font-medium" dir="rtl">
           <Link
             href="/"
             onClick={() => setShowMenu(false)}
@@ -188,24 +199,20 @@ export default function Navbar() {
             تواصل معنا
           </Link>
           {
-            !user ? (
-              <Link href={'/auth/login'} className="py-2 px-6 bg-linear-to-br from-blue-600 to-blue-400 text-white rounded-md shadow-sm cursor-pointer">تسجيل الدخول</Link>
-            ) : (
-              <button
-                onClick={() => setViewConfirm(true)}
-                type="button"
-                disabled={logoutLoading}
-                className="py-2 px-6 bg-linear-to-br from-red-600 to-red-400 text-white rounded-md shadow-sm cursor-pointer">
-                {
-                  logoutLoading ?
-                    <span><Loader size={20} color="#fff" /></span>
-                    :
-                    "تسجيل الخروج"
-                }
-              </button>
-            )
+            user &&
+            <button
+              onClick={() => setViewConfirm(true)}
+              type="button"
+              disabled={logoutLoading}
+              className="py-2 px-6 bg-linear-to-br from-red-600 to-red-400 text-white rounded-md shadow-sm cursor-pointer">
+              {
+                logoutLoading ?
+                  <span><Loader size={20} color="#fff" /></span>
+                  :
+                  "تسجيل الخروج"
+              }
+            </button>
           }
-
         </div>
       )}
       <ConfirmModal

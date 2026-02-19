@@ -28,7 +28,7 @@ function MainImage({ src }) {
 }
 
 export default function ProductDetails() {
-  const { setupData, products, simple } = useAuth()
+  const { setupData, products, simple, user } = useAuth()
   const params = useParams()
   const id = params?.id
 
@@ -54,6 +54,10 @@ export default function ProductDetails() {
   })
 
   const handleAddToCart = async () => {
+    if (!user) {
+      toast.error('تسجيل الدخول مطلوب')
+      return
+    }
     // 1️⃣ تحقق من المخزون
     if (quantity > product.stock) {
       toast.error("الكمية المطلوبة غير متاحة");

@@ -6,6 +6,7 @@ import { searchProducts } from "@/lib/api";
 import Loader from "@/Components/Loader";
 import ProductCard from "@/Components/ProductCard";
 import SearchBar from "@/Components/SearchBar";
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
 export default function SearchPage() {
 
@@ -36,7 +37,7 @@ export default function SearchPage() {
         if (q) fetchData();
     }, [q, page]);
 
-    if (loading) return <div className="py-40 flex justify-center"><Loader /></div>;
+    if (loading) return <div className="py-40 flex justify-center items-center h-screen w-full"><Loader /></div>;
 
     return (
         <main className="container min-h-screen mx-auto px-4 py-10" dir="rtl">
@@ -66,20 +67,45 @@ export default function SearchPage() {
                         ))}
                     </div>
 
-                    {/* pagination */}
-                    <div className="flex justify-center gap-2 mt-10">
-                        {Array.from({ length: totalPages }).map((_, i) => (
+                    {/* pagiDnation */}
+                    {
+                        totalPages > 1 &&
+                        <div className="flex justify-center items-center gap-1 pt-10 select-none flex-wrap mt-auto mb-0">
+
+                            {/* Previous */}
                             <button
-                                key={i}
-                                onClick={() => setPage(i + 1)}
-                                className={`px-4 py-2 rounded ${page === i + 1 ? "bg-black text-white" : "border"}`}
+                                disabled={page === 1}
+                                onClick={() => setPage(prev => prev - 1)}
+                                className="h-10 px-3 rounded-lg border border-gray-300 text-gray-700 bg-gray-200 hover:bg-gray-100 disabled:opacity-30 transition cursor-pointer"
                             >
-                                {i + 1}
+                                <FaChevronRight />
                             </button>
-                        ))}
-                    </div>
+
+                            {Array.from({ length: totalPages }).map((_, i) => (
+                                <button
+                                    key={i}
+                                    onClick={() => setPage(i + 1)}
+                                    className={`min-w-10 h-10 px-3 rounded-lg font-bold text-sm transition-all duration-200 cursor-pointer ${page === i + 1 ?
+                                        "bg-linear-to-br from-black to-black/70 text-white shadow-sm scale-105" :
+                                        "border border-gray-300 hover:bg-gray-100"}`}
+                                >
+                                    {i + 1}
+                                </button>
+                            ))}
+
+                            {/* Next */}
+                            <button
+                                disabled={page === totalPages}
+                                onClick={() => setPage(prev => prev + 1)}
+                                className="h-10 px-3 rounded-lg border border-gray-300 text-gray-700 bg-gray-200 hover:bg-gray-100 disabled:opacity-30 transition cursor-pointer"
+                            >
+                                <FaChevronLeft />
+                            </button>
+                        </div>
+                    }
                 </>
-            )}
-        </main>
+            )
+            }
+        </main >
     );
 }

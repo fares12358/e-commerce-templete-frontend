@@ -179,7 +179,7 @@ export default function RegisterPage() {
             <input
               type="checkbox"
               checked={data.checkbox}
-              onChange={(e) => handleChange("checkbox", e.target.value)}
+              onChange={() => handleChange("checkbox", !data.checkbox)}
             className="mt-1 accent-black"
             />
             <p>

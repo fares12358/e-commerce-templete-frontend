@@ -22,7 +22,7 @@ export default function Loading() {
       <div className="flex flex-col items-center w-full max-w-120 px-6">
         {/* Logo */}
         <div className="flex flex-col items-center gap-8 mb-12">
-          <FaShoppingBag className={'text-3xl text-black'}/>
+          <FaShoppingBag className={'text-5xl text-black'}/>
         </div>
 
         {/* Progress */}
