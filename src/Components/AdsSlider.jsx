@@ -33,7 +33,7 @@ export default function AdsSlider() {
   const slide = ads[index];
 
   return (
-    <section className="relative overflow-hidden rounded-3xl bg-[#f5f5f7] mb-5">
+    <section className="relative overflow-hidden rounded-2xl bg-white shadow-sm mb-5">
 
       <AnimatePresence mode="wait">
         <motion.div
@@ -42,7 +42,7 @@ export default function AdsSlider() {
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: -80 }}
           transition={{ duration: 0.6, ease: "easeInOut" }}
-          className="flex flex-col md:flex-row items-center p-8 md:p-16"
+          className="flex flex-col md:flex-row items-center p-4 md:p-16"
         >
 
           {/* Text */}
@@ -89,14 +89,14 @@ export default function AdsSlider() {
         <>
           <button
             onClick={prev}
-            className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 p-3 rounded-full shadow hover:scale-110 transition"
+            className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 p-3 rounded-full shadow hover:scale-110 transition cursor-pointer"
           >
             <FaChevronRight />
           </button>
 
           <button
             onClick={next}
-            className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 p-3 rounded-full shadow hover:scale-110 transition"
+            className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 p-3 rounded-full shadow hover:scale-110 transition cursor-pointer"
           >
             <FaChevronLeft />
           </button>

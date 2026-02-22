@@ -1,13 +1,19 @@
 "use client";
 
+import Loader from "@/Components/Loader";
 import { useAuth } from "@/context/AuthContext";
 import { motion } from "framer-motion";
 import { FaShoppingBag } from "react-icons/fa";
 
-
 export default function CategoriesPage() {
-  const { setupData } = useAuth()
+  const { setupData, setupLoading } = useAuth()
 
+  if (setupLoading) {
+    return (
+      <div className="flex w-full h-screen items-center justify-center"><Loader size={30} color="#000" /></div>
+    )
+  }
+  
   if (!setupData) {
     return (
       <div className="flex justify-center items-center min-h-screen">
@@ -16,7 +22,7 @@ export default function CategoriesPage() {
     )
   }
   return (
-    <div className="min-h-screen px-6 py-20 max-w-300 mx-auto">
+    <div className="min-h-screen px-6 py-6 md:py-20 max-w-300 mx-auto">
       {/* Heading */}
       <div className="text-center mb-14">
         <h1 className="text-4xl font-black text-black mb-3">التصنيفات</h1>
@@ -26,9 +32,7 @@ export default function CategoriesPage() {
       </div>
 
       {/* Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-
-
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-8">
         {
           setupData.categories &&
           setupData.categories.map((cat, i) => (
@@ -39,12 +43,11 @@ export default function CategoriesPage() {
               transition={{ type: "spring", stiffness: 200 }}
               className="group cursor-pointer"
             >
-              <div className="relative aspect-4/5 overflow-hidden rounded-xl bg-gray-100 shadow-md">
+              <div className="relative aspect-4/5  overflow-hidden rounded-xl bg-gray-100 shadow-md">
                 <motion.img
                   src={cat.image.url}
                   alt={cat.name}
                   className="w-full h-full object-cover"
-                  whileHover={{ scale: 1.08 }}
                   transition={{ duration: 0.4 }}
                 />
 
@@ -57,7 +60,7 @@ export default function CategoriesPage() {
               </div>
 
               <div className="text-center mt-4">
-                <h3 className="text-xl font-bold group-hover:text-black transition">
+                <h3 className="md:text-xl font-bold group-hover:text-black transition">
                   {cat.name}
                 </h3>
               </div>

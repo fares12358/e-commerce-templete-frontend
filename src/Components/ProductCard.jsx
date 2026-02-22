@@ -4,10 +4,8 @@ import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import {
   FaShoppingCart,
-  FaDollarSign,
   FaStar,
 } from "react-icons/fa";
-import { useState } from "react";
 import { toast } from "react-toastify";
 import { useAuth } from "@/context/AuthContext";
 
@@ -26,7 +24,6 @@ export default function ProductCard({
   const { simple, user } = useAuth()
   const router = useRouter();
   const inStock = stock > 0;
-  const [open, setOpen] = useState(false);
 
   const copyToClipboard = async (text) => {
     try {
@@ -40,24 +37,24 @@ export default function ProductCard({
   return (
     <motion.div
       whileHover={{ y: -6 }}
-      className="group bg-white w-full max-w-sm overflow-hidden rounded-xl p-2 border border-gray-100 shadow-sm hover:shadow-xl transition flex flex-col items-start justify-start"
+      className="group relative bg-white w-full max-w-sm overflow-hidden rounded-xl p-2 border border-gray-100 shadow-sm hover:shadow-xl transition flex flex-col items-start justify-start"
       dir="rtl"
     >
+      {
+        star &&
+        <span className="absolute top-0 left-0 bg-white p-2 rounded-br-xl flex items-center justify-center z-10">
+          <FaStar className="text-amber-300 text-2xl drop-shadow-md" />
+        </span>
+      }
       {/* Image */}
       <div
         onClick={() => router.push(`/product/${id}`)}
-        className="relative h-50 md:h-60 w-full md:aspect-square bg-gray-50 flex items-center justify-center overflow-hidden cursor-pointer mx-auto">
+        className="relative h-50 md:h-60 w-full md:aspect-square bg-gray-50 flex items-center justify-center overflow-hidden cursor-pointer rounded-md mx-auto">
         <img
           src={image}
           alt={title}
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 rounded-md"
         />
-        {
-          star &&
-          <span className=" absolute top-0 left-0 bg-white p-2 rounded-br-xl flex items-center justify-center">
-            <FaStar className="text-amber-300 text-2xl drop-shadow-md" />
-          </span>
-        }
       </div>
 
       {/* Content */}
@@ -80,13 +77,7 @@ export default function ProductCard({
             {code}
           </div>
         </div>
-        <p className="text-gray-400 text-xs font-semibold">{category}</p>
-
-        {/* Title */}
-        <h3 className="text-sm font-semibold text-gray-700 line-clamp-2 min-h-14">
-          {title}
-        </h3>
-
+        <p className="text-gray-400 text-md font-semibold">{category}</p>
         {/* Price */}
         <div className="flex items-baseline gap-2">
           {
@@ -100,6 +91,10 @@ export default function ProductCard({
             {price.toLocaleString()} {simple}
           </span>
         </div>
+        {/* Title */}
+        <h3 className="text-sm font-semibold text-gray-700 line-clamp-2 min-h-14">
+          {title}
+        </h3>
 
         {/* Add to cart */}
         <button
@@ -111,7 +106,7 @@ export default function ProductCard({
             e.stopPropagation();
             onAdd();
           }}
-          className="mt-2 w-full flex items-center cursor-pointer justify-center gap-3 py-3 rounded-lg bg-linear-to-br from-black to-black/70 text-white font-bold text-sm transition hover:-translate-y-1 ease-in-out"
+          className="mt-2 w-full flex items-center cursor-pointer justify-center gap-3 py-3 rounded-md bg-linear-to-br from-black to-black/70 text-white font-bold text-sm transition hover:-translate-y-1 ease-in-out"
         >
           <FaShoppingCart />
           أضف إلى العربة

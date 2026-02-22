@@ -1,9 +1,8 @@
 'use client'
 import Link from "next/link";
-import { FaArrowLeft, FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { FaArrowAltCircleLeft, FaArrowLeft, FaChevronLeft, FaChevronRight, FaTags } from "react-icons/fa";
 import { useEffect, useRef, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
-
 
 export default function CategorySlider() {
     const { setupData } = useAuth();
@@ -47,28 +46,32 @@ export default function CategorySlider() {
     return (
         <section className="mb-16 relative max-w-full">
 
-            <div className="flex justify-between items-end mb-6 px-2">
-                <div>
-                    <h2 className="text-2xl font-bold">تسوق حسب الفئة</h2>
+            <div className="flex flex-col justify-between items-end mb-6 px-2 w-full">
+                <div className="mt-10 mb-6 w-full">
+                    <h2 className="text-2xl md:text-5xl font-bold flex items-center gap-2 mb-5">
+                        <span className="bg-linear-to-br from-gray-500 to-gray-300 p-4 rounded-2xl rotate-12 shadow-sm ml-2">
+                            <FaTags className="text-3xl text-white drop-shadow-md -rotate-12" /></span>
+                        تسوق حسب الفئة
+                    </h2>
                     <p className="text-sm text-gray-500">اكتشف مجموعاتنا المختارة بعناية</p>
                 </div>
 
-                <Link href={'/categories'} className="flex items-center justify-center cursor-pointer gap-1 font-bold hover:text-primary transition">
-                    عرض الكل <FaArrowLeft size={14} />
+                <Link href={'/categories'} className="flex items-center justify-center text-xs md:text-[16px] cursor-pointer gap-2 bg-white px-4 py-2 md:py-3 hover:-translate-y-1 duration-300 ease-in-out rounded-md shadow-sm w-fit font-bold hover:text-primary transition">
+                    عرض الكل <FaArrowAltCircleLeft className="md:text-xl drop-shadow-md"/>
                 </Link>
             </div>
 
             {/* Arrows (desktop) */}
             <button
                 onClick={() => scroll("left")}
-                className="hidden md:flex cursor-pointer absolute -left-4 top-1/2 -translate-y-1/2 bg-white shadow-md p-2 rounded-full hover:scale-105 transition"
+                className="hidden md:flex cursor-pointer absolute -left-4 bottom-10 bg-white shadow-md p-2 rounded-full hover:scale-105 transition"
             >
                 <FaChevronLeft />
             </button>
 
             <button
                 onClick={() => scroll("right")}
-                className="hidden md:flex cursor-pointer absolute -right-4 top-1/2 -translate-y-1/2 bg-white shadow-md p-2 rounded-full hover:scale-105 transition"
+                className="hidden md:flex cursor-pointer absolute -right-4 bottom-10 bg-white shadow-md p-2 rounded-full hover:scale-105 transition"
             >
                 <FaChevronRight />
             </button>

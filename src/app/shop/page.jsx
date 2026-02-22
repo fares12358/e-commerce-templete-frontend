@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import CategorySlider from "@/Components/CategorySlider";
 import ProductCard from "@/Components/ProductCard";
 import SearchBar from "@/Components/SearchBar";
@@ -14,9 +13,7 @@ import CartSidePanel from "@/Components/CartSidePanel";
 const LIMIT = 20;
 
 export default function ShopPage() {
-    const { products, setProducts } = useAuth()
-    const [page, setPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(0);
+    const { products, setProducts, setupData, shopPag, setShopPag } = useAuth()
     const [loading, setLoading] = useState(false);
 
     const [open, setOpen] = useState(false);
@@ -27,17 +24,35 @@ export default function ShopPage() {
         setOpen(true);
     };
 
-    const loadProducts = async (p = 1) => {
+    const loadProducts = async (p = shopPag.page) => {
+
+        // ✅ لو الصفحة موجودة في state لا تعمل API call
+        if (products[p]) {
+            setShopPag(prev => ({ ...prev, page: p }));
+            return;
+        }
+
         try {
             setLoading(true);
+
             const res = await getProducts(p, LIMIT, null);
-            // ✅ match backend response
+
             if (res.success) {
-                const { products, pagination } = res.data;
-                setProducts(products);
-                setTotalPages(pagination.totalPages);
-                setPage(pagination.page);
+                const { products: newProducts, pagination } = res.data;
+
+                // ✅ خزّن المنتجات حسب الصفحة
+                setProducts(prev => ({
+                    ...prev,
+                    [pagination.page]: newProducts
+                }));
+
+                setShopPag(prev => ({
+                    ...prev,
+                    page: pagination.page,
+                    totalPages: pagination.totalPages
+                }));
             }
+
         } catch (err) {
             console.error("PRODUCT LOAD ERROR", err);
         } finally {
@@ -46,36 +61,39 @@ export default function ShopPage() {
     };
 
     useEffect(() => {
-        if (products.length > 0) return
+        if (products[1]) return;
         loadProducts(1);
     }, []);
 
     const changePage = (p) => {
-        if (p < 1 || p > totalPages || p === page) return;
+        if (p < 1 || p > shopPag.totalPages || p === shopPag.page) return;
         loadProducts(p);
     };
 
 
     /* Smart page numbers */
     const getPages = () => {
-        if (totalPages <= 7)
-            return Array.from({ length: totalPages }, (_, i) => i + 1);
+        const total = shopPag.totalPages;
+        const current = shopPag.page;
+
+        if (total <= 7)
+            return Array.from({ length: total }, (_, i) => i + 1);
 
         const pages = [1];
 
-        if (page > 3) pages.push("...");
+        if (current > 3) pages.push("...");
 
         for (
-            let i = Math.max(2, page - 1);
-            i <= Math.min(totalPages - 1, page + 1);
+            let i = Math.max(2, current - 1);
+            i <= Math.min(total - 1, current + 1);
             i++
         ) {
             pages.push(i);
         }
 
-        if (page < totalPages - 2) pages.push("...");
+        if (current < total - 2) pages.push("...");
 
-        pages.push(totalPages);
+        pages.push(total);
 
         return pages;
     };
@@ -84,7 +102,10 @@ export default function ShopPage() {
         <main className="container mx-auto px-6 py-10">
 
             <SearchBar />
-            <CategorySlider />
+            {
+                setupData?.categories &&
+                <CategorySlider />
+            }
 
             {/* Products */}
             {loading ? (
@@ -92,8 +113,8 @@ export default function ShopPage() {
             ) : (
                 <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-12">
                     {
-                        products.length > 0 ?
-                            products.map((p) => (
+                        products[shopPag.page]?.length > 0 ?
+                            products[shopPag.page].map((p) => (
                                 <ProductCard
                                     key={p._id}
                                     id={p._id}
@@ -112,16 +133,14 @@ export default function ShopPage() {
                     }
                 </div>
             )}
-
-
             {/* Pagination */}
-            {totalPages > 1 && (
+            {shopPag.totalPages > 1 && (
                 <div className="flex justify-center items-center gap-1 pt-10 select-none flex-wrap mt-auto mb-0">
 
                     {/* Previous */}
                     <button
-                        disabled={page === 1}
-                        onClick={() => changePage(page - 1)}
+                        disabled={shopPag.page === 1}
+                        onClick={() => changePage(shopPag.page - 1)}
                         className="h-10 px-3 rounded-lg border border-gray-300 text-gray-700 bg-gray-200 hover:bg-gray-100 disabled:opacity-30 transition cursor-pointer"
                     >
                         <FaChevronRight />
@@ -138,7 +157,7 @@ export default function ShopPage() {
                                 key={index}
                                 onClick={() => changePage(p)}
                                 className={`min-w-10 h-10 px-3 rounded-lg font-bold text-sm transition-all duration-200 cursor-pointer
-            ${page === p
+            ${shopPag.page === p
                                         ? "bg-linear-to-br from-black to-black/70 text-white shadow-sm scale-105"
                                         : "border border-gray-300 hover:bg-gray-100"
                                     }`}
@@ -150,8 +169,8 @@ export default function ShopPage() {
 
                     {/* Next */}
                     <button
-                        disabled={page === totalPages}
-                        onClick={() => changePage(page + 1)}
+                        disabled={shopPag.page === shopPag.totalPages}
+                        onClick={() => changePage(shopPag.page + 1)}
                         className="h-10 px-3 rounded-lg border border-gray-300 text-gray-700 bg-gray-200 hover:bg-gray-100 disabled:opacity-30 transition"
                     >
                         <FaChevronLeft />

@@ -136,11 +136,13 @@ export default function ProductDetails() {
     loadProduct()
   }, [id, setupData, products])
 
-  if (!product) return null
+  if (!product) return (
+    <div className="w-full h-screen flex items-center justify-center text-xl font-semibold text-gray-400">المنتج غير متاح</div>
+  )
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center w-full h-full"><Loader size={30} color="#000" /></div>
+      <div className="flex items-center justify-center w-full h-screen"><Loader size={30} color="#000" /></div>
     )
   }
 
@@ -152,10 +154,10 @@ export default function ProductDetails() {
       <div className="lg:col-span-7 w-full max-w-full">
 
         {/* Main Image */}
-        <div className="w-full aspect-square bg-gray-100 rounded-xl border border-gray-200 shadow-sm p-4 overflow-hidden">
+        <div className="w-full aspect-square bg-gray-100 rounded-xl border border-gray-200 shadow-sm p-5 overflow-hidden">
           <img
             src={activeImage}
-            className="w-full h-full object-contain"
+            className="w-full h-full object-contain rounded-xl"
             alt="product"
           />
         </div>
@@ -168,8 +170,8 @@ export default function ProductDetails() {
               onClick={() => setActiveImage(img)}
               className={`
         shrink-0 w-16 h-16 sm:w-20 sm:h-20
-        rounded-lg border overflow-hidden bg-white
-        ${activeImage === img ? "border-black" : "border-gray-200"}
+        rounded-lg border-2 overflow-hidden bg-white cursor-pointer shadow-sm
+        ${activeImage === img ? "border-black/50" : "border-gray-200"}
       `}
             >
               <img
@@ -187,14 +189,14 @@ export default function ProductDetails() {
       <div className="lg:col-span-5 space-y-8">
 
         <div>
-          <h1 className="text-4xl font-black leading-tight">
+          <h1 className="text-xl md:text-4xl font-black leading-tight mb-5">
             {product.name}
           </h1>
           <p className="text-gray-400 text-sm mt-1">
             {product.productNumber}
           </p>
-          <p className="text-gray-400 text-md font-semibold mt-2">
-            {product.categoryId.name}
+          <p className="text-gray-400 text-xl md:text-2xl font-semibold mt-5">
+            {product?.categoryId?.name}
           </p>
         </div>
 

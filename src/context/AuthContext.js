@@ -10,7 +10,7 @@ export const AuthProvider = ({ children }) => {
   const [isAuth, setIsAuth] = useState(false);
   const [loading, setLoading] = useState(true);
   const [setupData, setSetupData] = useState(null);
-  const [setupLoading, setSetupLoading] = useState(false)
+  const [setupLoading, setSetupLoading] = useState(true)
   const [data, setData] = useState({
     name: "fares",
     email: "fares.dev.m@gmail.com",
@@ -18,13 +18,18 @@ export const AuthProvider = ({ children }) => {
     confirm: "123456",
     checkbox: true
   })
-  const [products, setProducts] = useState([]);
   const [cart, setCart] = useState([]);
   const [category, setCategory] = useState({})
   const [categoryCache, setCategoryCache] = useState({})
   const [addresses, setAddresses] = useState([]);
   const [orders, setOrders] = useState([]);
   const [simple, setSimple] = useState('');
+  const [products, setProducts] = useState({});
+  const [shopPag, setShopPag] = useState({
+    page: 1,
+    totalPages: 0,
+    limit: 20
+  });
 
   const checkAuth = async () => {
     try {
@@ -102,7 +107,8 @@ export const AuthProvider = ({ children }) => {
         categoryCache, setCategoryCache,
         addresses, setAddresses,
         orders, setOrders,
-        simple, setSimple
+        simple, setSimple,
+        shopPag, setShopPag
       }}
     >
       {children}
