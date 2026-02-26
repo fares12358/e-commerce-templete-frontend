@@ -4,9 +4,9 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import { getOrderById, cancelOrder, getInvoice } from "@/lib/api";
-
 import { useAuth } from "@/context/AuthContext";
 import { motion } from "framer-motion";
+
 import {
   FaCheckCircle,
   FaCog,
@@ -344,23 +344,23 @@ export default function OrderDetailsPage() {
           }
         </div>
 
-        {order.status === "pending" && (
-          <div className="flex flex-col md:flex-row items-center justify-center gap-5 pt-6 border-t border-gray-200 mt-6">
-            {order.status !== "cancelled" && (
-              <button
-                onClick={HandlegetInvoice}
-                className="w-full bg-linear-to-br from-black to-black/70 text-white py-3 rounded-lg cursor-pointer font-bold flex items-center justify-center gap-2 hover:-translate-y-1 duration-300 transition ease-in-out">
-                {
-                  invoceLoading ?
-                    <span className="w-full h-full flex items-center justify-center"><Loader size={25} color="#fff" /></span>
-                    :
-                    <>
-                      <FaPrint /> طلب الفاتورة
-                    </>
-                }
-              </button>
-            )}
+        <div className="flex flex-col md:flex-row items-center justify-center gap-5 pt-6 border-t border-gray-200 mt-6">
+          {order.status !== "cancelled" && (
+            <button
+              onClick={HandlegetInvoice}
+              className="w-full bg-linear-to-br from-black to-black/70 text-white py-3 rounded-lg cursor-pointer font-bold flex items-center justify-center gap-2 hover:-translate-y-1 duration-300 transition ease-in-out">
+              {
+                invoceLoading ?
+                  <span className="w-full h-full flex items-center justify-center"><Loader size={25} color="#fff" /></span>
+                  :
+                  <>
+                    <FaPrint /> طلب الفاتورة
+                  </>
+              }
+            </button>
+          )}
 
+          {order.status === "pending" && (
             <button
               onClick={handleCancelOrder}
               disabled={cancelLoading}
@@ -368,8 +368,8 @@ export default function OrderDetailsPage() {
             >
               {cancelLoading ? "جاري الإلغاء..." : "إلغاء الطلب"}
             </button>
-          </div>
-        )}
+          )}
+        </div>
 
       </motion.div>
 

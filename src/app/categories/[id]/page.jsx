@@ -13,6 +13,7 @@ import { FaChevronLeft, FaChevronRight } from "react-icons/fa"
 const PAGE_LIMIT = 20
 
 const SORT_OPTIONS = [
+  { value: "oldest", label: "الأقدم" },
   { value: "newest", label: "الأحدث" },
   { value: "priceAsc", label: "السعر: من الأقل" },
   { value: "priceDesc", label: "السعر: من الأعلى" }

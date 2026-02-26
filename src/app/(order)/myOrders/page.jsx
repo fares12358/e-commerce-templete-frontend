@@ -130,6 +130,11 @@ export default function MyOrdersPage() {
 
   const fetchOrders = async () => {
     try {
+      const cacheKey = `${filter}_${sort}_${page}_${search}`;
+
+      // ✅ لو موجود في الكاش لا تعمل API call
+      if (orders[cacheKey]) return;
+
       setLoading(true);
 
       const params = {
@@ -139,10 +144,16 @@ export default function MyOrdersPage() {
 
       if (filter !== "all") params.status = filter;
       if (search) params.orderNumber = search;
+
       const res = await getOrders(params);
 
-      setOrders(res.data);
+      setOrders(prev => ({
+        ...prev,
+        [cacheKey]: res.data
+      }));
+
       setTotalPages(res.pagination.totalPages);
+
     } catch (err) {
       toast.error("فشل تحميل الطلبات");
     } finally {
@@ -256,9 +267,9 @@ export default function MyOrdersPage() {
       {/* Orders */}
       {loading ? (
         <div className="w-full min-h-[50vh] flex items-center justify-center"><Loader size={30} color="#000" /></div>
-      ) : orders?.length ? (
+      ) : orders[`${filter}_${sort}_${page}_${search}`]?.length ? (
         <div className="space-y-4">
-          {orders.map((order) => (
+          {orders[`${filter}_${sort}_${page}_${search}`]?.map((order) => (
             <OrderCard key={order._id} order={order} simple={simple} />
           ))}
         </div>

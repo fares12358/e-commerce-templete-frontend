@@ -334,13 +334,12 @@ export default function AddAddressPage() {
                     className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm"
                 >
                     <div className="flex flex-col lg:flex-row  justify-between gap-2 items-center p-4 border-b border-slate-200">
-
                         <button
                             onClick={detectMyLocation}
                             disabled={loadingLocation}
-                            className="text-black text-sm font-bold flex items-center gap-2 cursor-pointer"
+                            className="text-black text-sm font-bold flex items-center gap-2 cursor-pointer shadow-sm py-3 p-4 rounded-md bg-linear-to-br from-gray-200 to-gray-50"
                         >
-                            <FaCrosshairs /> موقعي الحالي
+                            <FaCrosshairs /> تحديد موقعي الحالي 
                         </button>
                         {showLocationNote && (
                             <div className="flex items-start justify-between gap-3 bg-yellow-50 border border-yellow-200
@@ -349,7 +348,7 @@ export default function AddAddressPage() {
                                     <FaCrosshairs className="mt-0.5" />
                                     <span>
                                         لتحديد موقعك تلقائيًا، اضغط على
-                                        <strong> “موقعي الحالي” </strong>
+                                        <strong> “تحديد موقعي الحالي” </strong>
                                         وسيُطلب منك السماح بالوصول إلى موقعك.
                                     </span>
                                 </div>
@@ -362,7 +361,6 @@ export default function AddAddressPage() {
                                 </button>
                             </div>
                         )}
-
                     </div>
 
                     <div ref={mapRef} className="relative h-95">

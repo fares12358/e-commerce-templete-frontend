@@ -30,13 +30,22 @@ export const updatePassword = async (payload) => {
 /* ================= public data ================= */
 export const getSetupData = async () => api.get('/data');
 export const sendContact = async (data) => api.post('/contact', data);
-export const getProducts = async (page = 1, limit = 20, categoryId) => {
-    const params = {}
-    if (page) params.page = page
-    if (limit) params.limit = limit
-    if (categoryId) params.categoryId = categoryId
-    return await api.get("/products", { params })
-}
+
+export const getProducts = async (
+    page = 1,
+    limit = 20,
+    categoryId,
+    sort
+  ) => {
+    const params = {};
+  
+    if (page) params.page = page;
+    if (limit) params.limit = limit;
+    if (categoryId) params.categoryId = categoryId;
+    if (sort) params.sort = sort; // ✅ جديد
+  
+    return await api.get("/products", { params });
+  };
 
 /* ================= user cart ================= */
 
@@ -91,4 +100,3 @@ export const suggestProducts = (q, signal) =>
 // 🔎 صفحة النتائج
 export const searchProducts = (q, page = 1) =>
     api.get(`/products/search?q=${encodeURIComponent(q)}&page=${page}`);
-

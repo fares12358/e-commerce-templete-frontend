@@ -22,7 +22,7 @@ export const AuthProvider = ({ children }) => {
   const [category, setCategory] = useState({})
   const [categoryCache, setCategoryCache] = useState({})
   const [addresses, setAddresses] = useState([]);
-  const [orders, setOrders] = useState([]);
+  const [orders, setOrders] = useState({});
   const [simple, setSimple] = useState('');
   const [products, setProducts] = useState({});
   const [shopPag, setShopPag] = useState({

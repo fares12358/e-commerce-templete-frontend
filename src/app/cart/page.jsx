@@ -6,6 +6,7 @@ import {
     FaMinus,
     FaTrash,
     FaBoxOpen,
+    FaShoppingCart,
 } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -14,6 +15,7 @@ import { getCart, updateCart, removeCart, clearCart } from "@/lib/api";
 import { toast } from "react-toastify";
 import Loader from "@/Components/Loader";
 import ConfirmModal from "@/Components/ConfirmModal";
+import Link from "next/link";
 
 export default function CartPage() {
     const router = useRouter()
@@ -177,9 +179,7 @@ export default function CartPage() {
                 </div>
                 {
                     cart.length > 0 ?
-
                         <div className="flex flex-col lg:flex-row gap-12 mt-10">
-
                             {/* Items */}
                             <div className="flex-1 divide-y divide-gray-200">
 
@@ -209,7 +209,7 @@ export default function CartPage() {
                                                     </div>
                                                 </div>
                                                 <p className="text-lg font-bold hidden sm:block w-full">
-                                                    {(item.price *  (pendingQty[item.itemId] ?? item.quantity)).toLocaleString()} {simple}
+                                                    {(item.price * (pendingQty[item.itemId] ?? item.quantity)).toLocaleString()} {simple}
                                                 </p>
                                             </div>
 
@@ -366,7 +366,13 @@ export default function CartPage() {
 
                         </div>
                         :
-                        <div className="text-md font-semibold text-gray-500 w-full min-h-[50vh] flex items-center justify-center">لا توجد منتجات تسوق واضف ما تريد</div>
+                        <div className="text-md font-semibold text-gray-500 w-full min-h-[50vh] flex items-center flex-col gap-4 justify-center">
+                            لا توجد منتجات تسوق واضف ما تريد
+                            <Link href={'/shop'} className="flex items-center gap-2 justify-center py-3 p-4 shadow-sm rounded-md bg-linear-to-br from-gray-200 to-gray-100 hover:-translate-y-1 duration-300 ease-in-out">
+                                <FaShoppingCart /> 
+                                اذهب الى المتجر
+                            </Link>
+                        </div>
                 }
             </div>
             <ConfirmModal

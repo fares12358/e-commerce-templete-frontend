@@ -95,7 +95,7 @@ export default function Home() {
                       stock={item.stock}
                       code={item.productNumber}
                       comparePrice={item.comparePrice}
-                      category={item?.categoryId?.name}
+                      category={item?.category?.name}
                       onAdd={() => openCart(item)}
                       star={true}
                     />
@@ -129,7 +129,7 @@ export default function Home() {
                   stock={item.stock}
                   code={item.productNumber}
                   comparePrice={item.comparePrice}
-                  category={item?.categoryId?.name}
+                  category={item?.category?.name}
                   onAdd={() => openCart(item)}
                   star={true}
                 />
@@ -164,7 +164,7 @@ export default function Home() {
                       stock={item.stock}
                       code={item.productNumber}
                       comparePrice={item.comparePrice}
-                      category={item?.categoryId?.name}
+                      category={item?.category?.name}
                       onAdd={() => openCart(item)}
                     />
                   </div>
@@ -197,7 +197,7 @@ export default function Home() {
                   stock={item.stock}
                   code={item.productNumber}
                   comparePrice={item.comparePrice}
-                  category={item?.categoryId?.name}
+                  category={item?.category?.name}
                   onAdd={() => openCart(item)}
                 />
               ))}

@@ -9,8 +9,16 @@ import { getProducts } from "@/lib/api";
 import Loader from "@/Components/Loader";
 import { useAuth } from "@/context/AuthContext";
 import CartSidePanel from "@/Components/CartSidePanel";
+import CustomSelect from "@/Components/CustomSelect";
 
 const LIMIT = 20;
+const SORT_OPTIONS = [
+    { label: "الأحدث", value: "new" },
+    { label: "الأقدم", value: "old" },
+    { label: "السعر: من الأقل للأعلى", value: "price_asc" },
+    { label: "السعر: من الأعلى للأقل", value: "price_desc" }
+];
+
 
 export default function ShopPage() {
     const { products, setProducts, setupData, shopPag, setShopPag } = useAuth()
@@ -18,16 +26,19 @@ export default function ShopPage() {
 
     const [open, setOpen] = useState(false);
     const [activeProduct, setActiveProduct] = useState(null);
+    const [sort, setSort] = useState(null);
 
     const openCart = (product) => {
         setActiveProduct(product);
         setOpen(true);
     };
 
-    const loadProducts = async (p = shopPag.page) => {
+    const loadProducts = async (p = shopPag.page, currentSort = sort) => {
 
-        // ✅ لو الصفحة موجودة في state لا تعمل API call
-        if (products[p]) {
+        // ❌ لا تستخدم الكاش إذا تغير الـ sort
+        const cacheKey = `${p}_${currentSort || "default"}`;
+
+        if (products[cacheKey]) {
             setShopPag(prev => ({ ...prev, page: p }));
             return;
         }
@@ -35,15 +46,14 @@ export default function ShopPage() {
         try {
             setLoading(true);
 
-            const res = await getProducts(p, LIMIT, null);
+            const res = await getProducts(p, LIMIT, null, currentSort);
 
             if (res.success) {
                 const { products: newProducts, pagination } = res.data;
 
-                // ✅ خزّن المنتجات حسب الصفحة
                 setProducts(prev => ({
                     ...prev,
-                    [pagination.page]: newProducts
+                    [cacheKey]: newProducts
                 }));
 
                 setShopPag(prev => ({
@@ -69,7 +79,6 @@ export default function ShopPage() {
         if (p < 1 || p > shopPag.totalPages || p === shopPag.page) return;
         loadProducts(p);
     };
-
 
     /* Smart page numbers */
     const getPages = () => {
@@ -111,27 +120,45 @@ export default function ShopPage() {
             {loading ? (
                 <div className="w-full min-h-screen flex items-center justify-center"><Loader size={30} color="#000" /></div>
             ) : (
-                <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-12">
-                    {
-                        products[shopPag.page]?.length > 0 ?
-                            products[shopPag.page].map((p) => (
-                                <ProductCard
-                                    key={p._id}
-                                    id={p._id}
-                                    title={p.name}
-                                    price={p.price}
-                                    image={p.images[0].url}
-                                    code={p.productNumber}
-                                    comparePrice={p.comparePrice}
-                                    stock={p.stock}
-                                    category={p?.categoryId?.name}
-                                    onAdd={() => openCart(p)}
-                                />
-                            ))
-                            :
-                            <div className="w-full min-h-screen h-full col-span-4 flex items-start pt-20 justify-center text-gray-500 text-xl">لا يوجد منتجات حاليا</div>
-                    }
-                </div>
+                <>
+                    <div className="flex justify-start mb-6">
+                        <CustomSelect
+                            value={sort}
+                            options={SORT_OPTIONS}
+                            placeholder="ترتيب حسب"
+                            onChange={(value) => {
+                                setSort(value);
+
+                                // 🔥 مهم: نرجع لأول صفحة
+                                setShopPag(prev => ({ ...prev, page: 1 }));
+
+                                // 🔥 نحمّل أول صفحة بالترتيب الجديد
+                                loadProducts(1, value);
+                            }}
+                        />
+                    </div>
+                    <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-12">
+                        {
+                            products[`${shopPag.page}_${sort || "default"}`]?.length > 0 ?
+                                products[`${shopPag.page}_${sort || "default"}`].map((p) => (
+                                    <ProductCard
+                                        key={p._id}
+                                        id={p._id}
+                                        title={p.name}
+                                        price={p.price}
+                                        image={p.images[0].url}
+                                        code={p.productNumber}
+                                        comparePrice={p.comparePrice}
+                                        stock={p.stock}
+                                        category={p?.category?.name}
+                                        onAdd={() => openCart(p)}
+                                    />
+                                ))
+                                :
+                                <div className="w-full min-h-screen h-full col-span-4 flex items-start pt-20 justify-center text-gray-500 text-xl">لا يوجد منتجات حاليا</div>
+                        }
+                    </div>
+                </>
             )}
             {/* Pagination */}
             {shopPag.totalPages > 1 && (
