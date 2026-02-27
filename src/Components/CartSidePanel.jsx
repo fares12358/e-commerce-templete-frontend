@@ -26,7 +26,7 @@ export default function CartSidePanel({
     const handleSelect = (name, value) => {
         setSelected(prev => ({ ...prev, [name]: value }));
     };
-    
+
     const handleAdd = async () => {
         if (!user) return
         if (quantity > stock) {
@@ -86,11 +86,11 @@ export default function CartSidePanel({
                         animate={{ x: 0 }}
                         exit={{ x: "100%" }}
                         transition={{ type: "spring", damping: 25 }}
-                        className="fixed top-0 right-0 h-screen w-full sm:w-[420px] bg-white z-50 p-6 overflow-y-auto"
+                        className="fixed top-0 right-0 h-screen w-full sm:w-105 bg-white z-50 p-6 overflow-y-auto"
                         dir="rtl"
                     >
                         {/* Product Image */}
-                        <div className="w-full aspect-square bg-gray-50 rounded-xl flex items-center justify-center mb-4 overflow-hidden">
+                        <div className="w-[80%] md:w-full mx-auto aspect-square bg-gray-50 rounded-xl flex items-center justify-center mb-4 overflow-hidden">
                             <img
                                 src={image}
                                 alt={name}
@@ -100,11 +100,11 @@ export default function CartSidePanel({
 
                         <h2 className="text-md font-bold mb-2">{name}</h2>
 
-                        <div className="text-sm font-semibold text-gray-500 mb-1">
+                        <div className={`text-sm w-fit py-2 px-3 rounded-md font-semibold ${stock > 0 ? 'text-green-600 bg-green-50' : 'text-red-600 bg-red-50'} text-gray-500 mb-1`}>
                             المخزون: {stock}
                         </div>
 
-                        <div className="text-2xl flex items-center gap-1 font-semibold text-green-600 mb-4">
+                        <div className="text-2xl flex items-center gap-1 font-bold text-blue-400 mb-4">
                             {
                                 comparePrice > price && (
                                     <del className="text-sm text-gray-400 font-semibold">

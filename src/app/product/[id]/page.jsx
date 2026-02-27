@@ -1,11 +1,10 @@
 'use client'
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { useParams } from "next/navigation"
 import { addToCart, getProductByID } from "@/lib/api"
 import { motion } from "framer-motion"
 import { FaShoppingCart, FaCheckCircle, FaTimesCircle } from "react-icons/fa"
 import { useAuth } from "@/context/AuthContext"
-import Loading from "@/app/loading"
 import Loader from "@/Components/Loader"
 import { toast } from "react-toastify"
 
@@ -53,7 +52,7 @@ export default function ProductDetails() {
     attributes: data.attributes || []
   })
 
-  const handleAddToCart = async () => {
+  const handleAddToCart = useCallback(async () => {
     if (!user) {
       toast.error('تسجيل الدخول مطلوب')
       return
@@ -97,54 +96,39 @@ export default function ProductDetails() {
     } finally {
       setAdding(false);
     }
-  };
+  }, [user, quantity, product, selectedOptions])
+
+
+  const loadProduct = async () => {
+    try {
+      setLoading(true);
+      const apiProduct = await getProductByID(id)
+      if (apiProduct.success) {
+        const normalized = normalizeProduct(apiProduct.data)
+        setProduct(normalized)
+        setActiveImage(normalized.images[0])
+      }
+    } catch (error) {
+      toast.error(error.message || 'فشل تحميل المنتج')
+    } finally {
+      setLoading(false)
+    }
+  }
 
   useEffect(() => {
     if (!id) return
-
-    const findProductInState = () => {
-      return (
-        setupData?.featuredProducts?.find(p => p._id === id) ||
-        setupData?.newProducts?.find(p => p._id === id) ||
-        products?.find(p => p._id === id)
-      )
-    }
-
-    const loadProduct = async () => {
-      const localProduct = findProductInState()
-
-      if (localProduct) {
-        const normalized = normalizeProduct(localProduct)
-        setProduct(normalized)
-        setActiveImage(normalized.images[0])
-        return
-      }
-
-      try {
-        setLoading(true);
-        const apiProduct = await getProductByID(id)
-        const normalized = normalizeProduct(apiProduct)
-        setProduct(normalized)
-        setActiveImage(normalized.images[0])
-      } catch (error) {
-        console.error("Failed to load product", error)
-      } finally {
-        setLoading(false)
-      }
-    }
-
     loadProduct()
-  }, [id, setupData, products])
-
-  if (!product) return (
-    <div className="w-full h-screen flex items-center justify-center text-xl font-semibold text-gray-400">المنتج غير متاح</div>
-  )
+  }, [id])
 
   if (loading) {
     return (
       <div className="flex items-center justify-center w-full h-screen"><Loader size={30} color="#000" /></div>
     )
   }
+
+  if (!product) return (
+    <div className="w-full h-screen flex items-center justify-center text-xl font-semibold text-gray-400">المنتج غير متاح</div>
+  )
 
   return (
     <div className="container mx-auto px-4 sm:px-6 py-10 lg:py-14 

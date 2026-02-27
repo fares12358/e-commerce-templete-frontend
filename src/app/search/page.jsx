@@ -48,10 +48,10 @@ export default function SearchPage() {
             </h2>
 
             {products?.length === 0 ? (
-                <p className="text-gray-400 text-center py-20">لا توجد نتائج</p>
+                <p className="text-gray-400 flex items-center justify-center rounded-md py-20 bg-white w-full min-h-[25vh] border border-gray-200 font-bold">لا توجد نتائج</p>
             ) : (
                 <>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
                         {products?.map(p => (
                             <ProductCard key={p._id}
                                 id={p._id}

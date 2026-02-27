@@ -89,7 +89,7 @@ export default function RegisterPage() {
       <motion.div
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
-        className="w-xl max-w-full bg-white flex flex-col items-center justify-center rounded-xl border border-gray-200 p-8 md:p-12"
+        className="w-xl max-w-full my-4 bg-white flex flex-col items-center justify-center rounded-xl border border-gray-200 p-8 md:p-12"
       >
         {/* Header */}
         <div className="text-center mb-8 flex flex-col items-center justify-center">
@@ -109,7 +109,8 @@ export default function RegisterPage() {
           {/* Name */}
           <Input
             label="الاسم الكامل"
-            placeholder="أحمد محمد"
+            ltr
+            placeholder="full name"
             icon={<FaUser />}
             onChange={(e) => handleChange("name", e.target.value)}
             value={data.name}
@@ -120,6 +121,7 @@ export default function RegisterPage() {
             label="البريد الإلكتروني"
             placeholder="name@example.com"
             ltr
+            type="email"
             icon={<FaEnvelope />}
             onChange={(e) => handleChange("email", e.target.value)}
             value={data.email}
@@ -182,7 +184,7 @@ export default function RegisterPage() {
               onChange={() => handleChange("checkbox", !data.checkbox)}
             className="mt-1 accent-black"
             />
-            <p>
+            <Link href={'/about'}>
               أوافق على{" "}
               <span className="text-sky-600 hover:underline font-semibold cursor-pointer">
                 شروط الخدمة
@@ -191,7 +193,7 @@ export default function RegisterPage() {
               <span className="text-sky-600 hover:underline font-semibold cursor-pointer">
                 سياسة الخصوصية
               </span>
-            </p>
+            </Link>
           </div>
 
           {/* Submit */}

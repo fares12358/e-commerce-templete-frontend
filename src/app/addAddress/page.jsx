@@ -293,10 +293,7 @@ export default function AddAddressPage() {
             if (res.success) {
                 setAddresses(res.data ?? []);
             }
-            setTimeout(() => {
                 resetPage();
-            }, 500);
-
         } catch (err) {
             toast.error(err.message || "حدث خطأ أثناء الحفظ");
         } finally {

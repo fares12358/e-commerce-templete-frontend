@@ -78,12 +78,12 @@ export default function ForgotPasswordPage() {
         {/* Form */}
         <div className="space-y-6 w-full">
 
-          <div className="space-y-2">
+          <div className="space-y-3">
             <label className="text-sm font-medium">
               البريد الإلكتروني
             </label>
 
-            <div className="relative">
+            <div className="relative mt-4">
               <input
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}

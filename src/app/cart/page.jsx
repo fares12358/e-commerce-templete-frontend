@@ -180,6 +180,75 @@ export default function CartPage() {
                 {
                     cart.length > 0 ?
                         <div className="flex flex-col lg:flex-row gap-12 mt-10">
+                            {/* Summary */}
+                            <div className="w-full h-fit lg:w-96 bg-white rounded-lg border border-gray-200 p-8 space-y-6">
+                                <div className="flex gap-3">
+                                    {hasChanges && (
+                                        <motion.button
+                                            disabled={deleting}
+                                            whileTap={{ scale: 0.97 }}
+                                            onClick={handleSaveChanges}
+                                            className="flex-1 py-2 rounded-md relative bg-linear-to-br from-black to-black/70 text-white font-bold hover:-translate-y-1 transition duration-300 ease-in-out cursor-pointer"
+                                        >
+                                            {
+                                                deleting ? <span className=" w-full h-full flex items-center justify-center"><Loader size={20} color="#fff" /></span>
+                                                    :
+                                                    "حفظ التغييرات"
+                                            }
+                                            <div className="absolute z-10 -top-1 -right-1 flex size-3">
+                                                <span className="w-3 h-3 absolute bg-green-500 rounded-full animate-ping"></span>
+                                                <span className="w-3 h-3 absolute bg-green-500 rounded-full"></span>
+                                            </div>
+                                        </motion.button>
+                                    )}
+
+                                    <button
+                                        onClick={() => {
+                                            setConfirmType("clear");
+                                            setviewConfirm(true);
+                                        }}
+                                        className="flex-1 py-2 rounded-md border border-gray-300 text-sm font-bold cursor-pointer hover:-translate-y-1 duration-300 ease-in-out text-gray-500 transition"
+                                    >
+                                        {clearing ? <span className="flex items-center justify-center w-full h-full"> <Loader size={20} color="#555" /> </span> : "تفريغ السلة"}
+                                    </button>
+                                </div>
+
+                                <h3 className="text-xl font-black uppercase">
+                                    ملخص الطلب
+                                </h3>
+
+                                <div className="space-y-4 border-b pb-6">
+                                    <Row label="المجموع الفرعي" value={`${subtotal.toLocaleString()} ${simple}`} />
+                                    {
+                                        setupData?.config?.vat > 0 && (
+                                            <Row label={`الضريبة التقديرية(${setupData?.config?.vat}%) `} value={`${tax.toLocaleString()} ${simple}`} />
+                                        )
+                                    }
+                                </div>
+
+                                <div className="flex justify-between text-xl font-black">
+                                    <span>الإجمالي</span>
+                                    <span className="text-blue-400">{total.toLocaleString()} {simple}</span>
+                                </div>
+                                {
+                                    setupData?.config?.shipment > 0 || setupData?.config?.shipment && (
+                                        <div className="flex items-center justify-between font-semibold text-gray-500">
+                                            <p className="">الشحن</p>
+                                            <p className="">{setupData?.config?.shipment} {simple}</p>
+                                        </div>
+                                    )
+                                }
+
+                                <motion.button
+                                    onClick={() => { router.push('/checkout') }}
+                                    whileTap={{ scale: 0.97 }}
+                                    className="w-full py-3 cursor-pointer rounded-md bg-linear-to-br from-black to-black/70 text-white hover:-translate-y-1 transition-all duration-300 ease-in-out font-black uppercase tracking-widest flex items-center justify-center gap-3"
+                                >
+                                    <FaBoxOpen />
+                                    إتمام الشراء
+
+                                </motion.button>
+                            </div>
                             {/* Items */}
                             <div className="flex-1 divide-y divide-gray-200">
 
@@ -198,7 +267,11 @@ export default function CartPage() {
                                         <div className="w-full md:col-span-2">
                                             <div className="flex gap-2 justify-between">
                                                 <div className="gap-1 flex flex-col">
-                                                    <p className="text-xs md:text-sm font-bold">{item.name}</p>
+                                                    <p className="text-xs md:text-sm font-bold line-clamp-2">{item.name}</p>
+                                                    <div className={`text-xs md:text-sm font-bold flex gap-1 items-center w-fit py-px p-3 border border-gray-50 rounded ${item.stock > 0? 'text-green-700 bg-green-100':'text-red-600 bg-red-100'}`}>
+                                                        <p>متوفر</p>
+                                                        {item.stock}
+                                                    </div>
                                                     <div className="text-gray-500 text-sm border-t border-gray-200 pt-1 mt-1">
                                                         {item.selections.map((select, i) => (
                                                             <div key={i} className="flex gap-2 font-semibold">
@@ -294,82 +367,14 @@ export default function CartPage() {
                                 ))}
                             </div>
 
-                            {/* Summary */}
-                            <div className="w-full h-fit lg:w-96 bg-white rounded-lg border border-gray-200 p-8 space-y-6">
-                                <div className="flex gap-3">
-                                    {hasChanges && (
-                                        <motion.button
-                                            disabled={deleting}
-                                            whileTap={{ scale: 0.97 }}
-                                            onClick={handleSaveChanges}
-                                            className="flex-1 py-2 rounded-md relative bg-linear-to-br from-black to-black/70 text-white font-bold hover:-translate-y-1 transition duration-300 ease-in-out cursor-pointer"
-                                        >
-                                            {
-                                                deleting ? <span className=" w-full h-full flex items-center justify-center"><Loader size={20} color="#fff" /></span>
-                                                    :
-                                                    "حفظ التغييرات"
-                                            }
-                                            <div className="absolute z-10 -top-1 -right-1 flex size-3">
-                                                <span className="w-3 h-3 absolute bg-green-500 rounded-full animate-ping"></span>
-                                                <span className="w-3 h-3 absolute bg-green-500 rounded-full"></span>
-                                            </div>
-                                        </motion.button>
-                                    )}
 
-                                    <button
-                                        onClick={() => {
-                                            setConfirmType("clear");
-                                            setviewConfirm(true);
-                                        }}
-                                        className="flex-1 py-2 rounded-md border border-gray-300 text-sm font-bold cursor-pointer hover:-translate-y-1 duration-300 ease-in-out text-gray-500 transition"
-                                    >
-                                        {clearing ? <span className="flex items-center justify-center w-full h-full"> <Loader size={20} color="#555" /> </span> : "تفريغ السلة"}
-                                    </button>
-                                </div>
-
-                                <h3 className="text-xl font-black uppercase">
-                                    ملخص الطلب
-                                </h3>
-
-                                <div className="space-y-4 border-b pb-6">
-                                    <Row label="المجموع الفرعي" value={`${subtotal.toLocaleString()} ${simple}`} />
-                                    {
-                                        setupData?.config?.vat > 0 && (
-                                            <Row label={`الضريبة التقديرية(${setupData?.config?.vat}%) `} value={`${tax.toLocaleString()} ${simple}`} />
-                                        )
-                                    }
-                                </div>
-
-                                <div className="flex justify-between text-xl font-black">
-                                    <span>الإجمالي</span>
-                                    <span>{total.toLocaleString()} {simple}</span>
-                                </div>
-                                {
-                                    setupData?.config?.shipment > 0 || setupData?.config?.shipment && (
-                                        <div className="flex items-center justify-between font-semibold text-gray-500">
-                                            <p className="">الشحن</p>
-                                            <p className="">{setupData?.config?.shipment} {simple}</p>
-                                        </div>
-                                    )
-                                }
-
-                                <motion.button
-                                    onClick={() => { router.push('/checkout') }}
-                                    whileTap={{ scale: 0.97 }}
-                                    className="w-full py-3 cursor-pointer rounded-md bg-linear-to-br from-black to-black/70 text-white hover:-translate-y-1 transition-all duration-300 ease-in-out font-black uppercase tracking-widest flex items-center justify-center gap-3"
-                                >
-                                    <FaBoxOpen />
-                                    إتمام الشراء
-
-                                </motion.button>
-                            </div>
 
                         </div>
                         :
                         <div className="text-md font-semibold text-gray-500 w-full min-h-[50vh] flex items-center flex-col gap-4 justify-center">
                             لا توجد منتجات تسوق واضف ما تريد
                             <Link href={'/shop'} className="flex items-center gap-2 justify-center py-3 p-4 shadow-sm rounded-md bg-linear-to-br from-gray-200 to-gray-100 hover:-translate-y-1 duration-300 ease-in-out">
-                                <FaShoppingCart /> 
+                                <FaShoppingCart />
                                 اذهب الى المتجر
                             </Link>
                         </div>

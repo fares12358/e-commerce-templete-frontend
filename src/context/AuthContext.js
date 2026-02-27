@@ -12,17 +12,17 @@ export const AuthProvider = ({ children }) => {
   const [setupData, setSetupData] = useState(null);
   const [setupLoading, setSetupLoading] = useState(true)
   const [data, setData] = useState({
-    name: "fares",
-    email: "fares.dev.m@gmail.com",
-    password: "123456",
-    confirm: "123456",
-    checkbox: true
+    name: "",
+    email: "",
+    password: "",
+    confirm: "",
+    checkbox: false
   })
   const [cart, setCart] = useState([]);
   const [category, setCategory] = useState({})
   const [categoryCache, setCategoryCache] = useState({})
   const [addresses, setAddresses] = useState([]);
-  const [orders, setOrders] = useState({});
+  const [orders, setOrders] = useState([]);
   const [simple, setSimple] = useState('');
   const [products, setProducts] = useState({});
   const [shopPag, setShopPag] = useState({

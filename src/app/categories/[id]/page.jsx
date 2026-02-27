@@ -147,6 +147,7 @@ export default function CategoryDetails() {
                   setActiveProduct(p)
                   setOpen(true)
                 }}
+                star={p?.isFeatured}
               />
             ))
             :

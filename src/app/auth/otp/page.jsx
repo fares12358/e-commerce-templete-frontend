@@ -21,7 +21,6 @@ export default function OtpVerificationPage() {
     const [verifying, setVerifying] = useState(false);
     const [resending, setResending] = useState(false);
 
-
     const length = 6;
     const inputs = useRef([]);
     const [code, setCode] = useState(Array(length).fill(""));
@@ -164,7 +163,7 @@ export default function OtpVerificationPage() {
                     أدخل رمز التحقق المرسل إلى الايميل
                     <br />
                     <span dir="ltr" className="font-medium text-black">
-                        fares.dev.m@gmail.com
+                        {data.email || ''}
                     </span>
                 </p>
                 <motion.div
@@ -172,10 +171,8 @@ export default function OtpVerificationPage() {
                         x: shake ? [-10, 10, -8, 8, -5, 5, 0] : 0
                     }}
                     transition={{ duration: 0.4 }}
-                    className="flex flex-row-reverse justify-center gap-4 mb-10"
+                    className="flex flex-row-reverse justify-center gap-1 md:gap-4 mb-10"
                 >
-
-
                     {/* OTP */}
 
                     {code.map((digit, i) => (
@@ -188,7 +185,7 @@ export default function OtpVerificationPage() {
                             autoComplete="one-time-code"
                             onChange={(e) => handleChange(i, e.target.value)}
                             onKeyDown={(e) => handleBack(i, e)}
-                            className="w-12 h-14 md:w-14 md:h-16 text-center text-2xl font-bold border-2 border-black rounded-xl"
+                            className="size-10 h-12 md:size-14 text-center text-2xl font-bold border-2 border-black rounded-md"
                         />
                     ))}
 
@@ -218,7 +215,7 @@ export default function OtpVerificationPage() {
                             </span>
                         </div>
 
-                        <div className="space-y-2 flex flex-col items-center justify-center">
+                        <div className="space-y-2 flex flex-col gap-5 items-center justify-center">
                             <button
                                 disabled={!canResend || resending}
                                 onClick={sendOtp}

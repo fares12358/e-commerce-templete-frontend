@@ -87,7 +87,7 @@ export default function ProductCard({
               </del>
             )
           }
-          <span className="text-md font-semibold text-gray-900 flex items-center">
+          <span className="text-md font-bold text-blue-400 flex items-center">
             {price.toLocaleString()} {simple}
           </span>
         </div>

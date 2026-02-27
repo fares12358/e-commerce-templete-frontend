@@ -130,33 +130,22 @@ export default function OrderDetailsPage() {
   const currentStatus = statusToStep[order?.status] || "ordered";
   const [invoceLoading, setInvoceLoading] = useState(false)
 
+  const fetchOrder  = async () => {
+    try {
+      setLoading(true);
+      // 2️⃣ fallback API
+      const res = await getOrderById(id);
+      setOrder(res.data);
+
+    } catch (err) {
+      toast.error(err.message);
+      router.push("/myOrders");
+    } finally {
+      setLoading(false);
+    }
+  };
   useEffect(() => {
-    const findOrder = async () => {
-      try {
-        setLoading(true);
-
-        // 1️⃣ search in context
-        const localOrder = orders?.find(o => o._id === id);
-
-        if (localOrder) {
-          setOrder(localOrder);
-          setLoading(false);
-          return;
-        }
-
-        // 2️⃣ fallback API
-        const res = await getOrderById(id);
-        setOrder(res.data);
-
-      } catch (err) {
-        toast.error(err.message);
-        router.push("/myOrders");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    findOrder();
+    if (id) fetchOrder();
   }, [id, orders]);
 
   const handleCancelOrder = async () => {

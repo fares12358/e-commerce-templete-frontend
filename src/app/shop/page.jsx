@@ -19,6 +19,13 @@ const SORT_OPTIONS = [
     { label: "السعر: من الأعلى للأقل", value: "price_desc" }
 ];
 
+const TYPE_OPTIONS = [
+    { label: "الكل", value: "" },
+    { label: "المميزه", value: "features" },
+    { label: "العروض", value: "offers" },
+    { label: "الخصومات", value: "discounts" },
+];
+
 
 export default function ShopPage() {
     const { products, setProducts, setupData, shopPag, setShopPag } = useAuth()
@@ -27,16 +34,20 @@ export default function ShopPage() {
     const [open, setOpen] = useState(false);
     const [activeProduct, setActiveProduct] = useState(null);
     const [sort, setSort] = useState(null);
+    const [type, setType] = useState(null);
 
     const openCart = (product) => {
         setActiveProduct(product);
         setOpen(true);
     };
 
-    const loadProducts = async (p = shopPag.page, currentSort = sort) => {
+    const loadProducts = async (
+        p = shopPag.page,
+        currentSort = sort,
+        currentType = type
+    ) => {
 
-        // ❌ لا تستخدم الكاش إذا تغير الـ sort
-        const cacheKey = `${p}_${currentSort || "default"}`;
+        const cacheKey = `${p}_${currentSort || "default"}_${currentType || "all"}`;
 
         if (products[cacheKey]) {
             setShopPag(prev => ({ ...prev, page: p }));
@@ -46,7 +57,12 @@ export default function ShopPage() {
         try {
             setLoading(true);
 
-            const res = await getProducts(p, LIMIT, null, currentSort);
+            const res = await getProducts({
+                page: p,
+                limit: LIMIT,
+                sort: currentSort,
+                type: currentType
+            });
 
             if (res.success) {
                 const { products: newProducts, pagination } = res.data;
@@ -71,7 +87,6 @@ export default function ShopPage() {
     };
 
     useEffect(() => {
-        if (products[1]) return;
         loadProducts(1);
     }, []);
 
@@ -121,7 +136,7 @@ export default function ShopPage() {
                 <div className="w-full min-h-screen flex items-center justify-center"><Loader size={30} color="#000" /></div>
             ) : (
                 <>
-                    <div className="flex justify-start mb-6">
+                    <div className="flex flex-col w-fit md:flex-row justify-start gap-3 mb-6">
                         <CustomSelect
                             value={sort}
                             options={SORT_OPTIONS}
@@ -136,11 +151,23 @@ export default function ShopPage() {
                                 loadProducts(1, value);
                             }}
                         />
+                        <CustomSelect
+                            value={type}
+                            options={TYPE_OPTIONS}
+                            placeholder="نوع المنتجات"
+                            onChange={(value) => {
+                                setType(value);
+
+                                setShopPag(prev => ({ ...prev, page: 1 }));
+
+                                loadProducts(1, sort, value);
+                            }}
+                        />
                     </div>
                     <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-12">
                         {
-                            products[`${shopPag.page}_${sort || "default"}`]?.length > 0 ?
-                                products[`${shopPag.page}_${sort || "default"}`].map((p) => (
+                            products[`${shopPag.page}_${sort || "default"}_${type || "all"}`]?.length > 0
+                                ? products[`${shopPag.page}_${sort || "default"}_${type || "all"}`].map((p) => (
                                     <ProductCard
                                         key={p._id}
                                         id={p._id}
@@ -152,6 +179,7 @@ export default function ShopPage() {
                                         stock={p.stock}
                                         category={p?.category?.name}
                                         onAdd={() => openCart(p)}
+                                        star={p?.isFeatured}
                                     />
                                 ))
                                 :

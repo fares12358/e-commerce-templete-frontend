@@ -9,9 +9,7 @@ import {
     FaBox,
     FaMapMarkerAlt,
     FaShoppingCart,
-    FaEdit,
     FaPlus,
-    FaSignOutAlt,
     FaChevronLeft,
     FaLock,
 } from "react-icons/fa";
@@ -29,7 +27,7 @@ export default function AccountPage() {
     if (!user) return
     return (
         <main
-            className="flex-1 w-full h-screen max-w-240 mx-auto px-4 md:px-10 py-12 text-black"
+            className="flex-1 w-full min-h-screen max-w-240 mx-auto px-4 md:px-10 py-12 text-black"
             dir="rtl"
         >
             {/* Profile */}
