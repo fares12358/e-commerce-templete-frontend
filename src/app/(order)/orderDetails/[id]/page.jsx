@@ -20,6 +20,7 @@ import {
 } from "react-icons/fa";
 import Link from "next/link";
 import Loader from "@/Components/Loader";
+import ConfirmModal from "@/Components/ConfirmModal";
 
 const steps = [
   { key: "ordered", label: "تم الطلب", icon: FaCheckCircle },
@@ -129,8 +130,10 @@ export default function OrderDetailsPage() {
   const [cancelLoading, setCancelLoading] = useState(false);
   const currentStatus = statusToStep[order?.status] || "ordered";
   const [invoceLoading, setInvoceLoading] = useState(false)
+  const [modalOpen, setModalOpen] = useState(false);
+  const [actionLoading, setActionLoading] = useState(false);
 
-  const fetchOrder  = async () => {
+  const fetchOrder = async () => {
     try {
       setLoading(true);
       // 2️⃣ fallback API
@@ -148,11 +151,9 @@ export default function OrderDetailsPage() {
     if (id) fetchOrder();
   }, [id, orders]);
 
-  const handleCancelOrder = async () => {
-    if (order.status !== "pending") return;
-
+  const handleConfirmCancel = async () => {
     try {
-      setCancelLoading(true);
+      setActionLoading(true);
 
       await cancelOrder(order._id);
 
@@ -162,13 +163,15 @@ export default function OrderDetailsPage() {
       }));
 
       toast.success("تم إلغاء الطلب بنجاح");
+      setModalOpen(false);
 
     } catch (err) {
       toast.error("فشل إلغاء الطلب");
     } finally {
-      setCancelLoading(false);
+      setActionLoading(false);
     }
   };
+
   const HandlegetInvoice = async () => {
     try {
       setInvoceLoading(true)
@@ -351,7 +354,7 @@ export default function OrderDetailsPage() {
 
           {order.status === "pending" && (
             <button
-              onClick={handleCancelOrder}
+              onClick={() => setModalOpen(true)}
               disabled={cancelLoading}
               className="w-full bg-linear-to-br to-red-400 from-red-700 text-white py-3 cursor-pointer rounded-lg font-bold hover:bg-red-50 hover:-translate-y-1 duration-300 transition ease-in-out"
             >
@@ -369,6 +372,18 @@ export default function OrderDetailsPage() {
           تواصل معنا
         </Link>
       </p>
+      {/* ================= CONFIRM CANCEL ORDER ================= */}
+      <ConfirmModal
+        open={modalOpen}
+        loading={actionLoading}
+        onCancel={() => {
+          if (!actionLoading) setModalOpen(false);
+        }}
+        onConfirm={handleConfirmCancel}
+        icon={<FaTimes className="text-red-500 text-4xl" />}
+        title="إلغاء الطلب"
+        message="هل أنت متأكد من إلغاء هذا الطلب؟ لا يمكن التراجع بعد ذلك."
+      />
     </main>
   );
 }

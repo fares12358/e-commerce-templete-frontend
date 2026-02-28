@@ -164,7 +164,7 @@ export default function ShopPage() {
                             }}
                         />
                     </div>
-                    <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-12">
+                    <div className="grid sm:grid-cols-2 xl:grid-cols-4 gap-x-8 gap-y-12">
                         {
                             products[`${shopPag.page}_${sort || "default"}_${type || "all"}`]?.length > 0
                                 ? products[`${shopPag.page}_${sort || "default"}_${type || "all"}`].map((p) => (

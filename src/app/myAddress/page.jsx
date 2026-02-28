@@ -29,6 +29,7 @@ export default function AddressesPage() {
   const [modalType, setModalType] = useState(null); // delete | default
   const [selectedId, setSelectedId] = useState(null);
   const [actionLoading, setActionLoading] = useState(false);
+  
   const router = useRouter();
   /* ================= GET LOCATIONS ================= */
   const fetchLocations = async () => {

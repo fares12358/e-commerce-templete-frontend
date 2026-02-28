@@ -118,7 +118,7 @@ export default function Home() {
 
             </div>
 
-            <div className="hidden md:grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="hidden md:grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-8">
               {setupData?.featuredProducts.map(item => (
                 <ProductCard
                   key={item._id}
@@ -186,7 +186,7 @@ export default function Home() {
 
             </div>
 
-            <div className="hidden md:grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-10">
+            <div className="hidden md:grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-8 mb-10">
               {setupData?.newProducts.map(item => (
                 <ProductCard
                   key={item._id}
